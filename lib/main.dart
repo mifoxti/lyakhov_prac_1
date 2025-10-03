@@ -15,16 +15,17 @@ class MyApp extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Ляхов Тимофей Алексеевич',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Ляхов Тимофей Алексеевич',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-
-              const SizedBox(width: 50),
-
+              const SizedBox(width: 20),
               ElevatedButton(
                 onPressed: null,
                 style: ButtonStyle(
