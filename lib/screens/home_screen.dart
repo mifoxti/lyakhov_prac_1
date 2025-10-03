@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'library_screen.dart';
+import 'player_screen.dart';
+import 'search_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,6 +27,30 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
               ),
+            ),
+            const SizedBox(height: 40),
+            _buildNavigationButton(
+              context,
+              '🎵 Библиотека',
+              const LibraryScreen(),
+            ),
+            const SizedBox(height: 20),
+            _buildNavigationButton(
+              context,
+              '▶️ Плеер',
+              const PlayerScreen(),
+            ),
+            const SizedBox(height: 20),
+            _buildNavigationButton(
+              context,
+              '🔍 Поиск',
+              const SearchScreen(),
+            ),
+            const SizedBox(height: 20),
+            _buildNavigationButton(
+              context,
+              '👤 Профиль',
+              const ProfileScreen(),
             ),
           ],
         ),
