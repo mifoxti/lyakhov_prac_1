@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: Center(
+          // Добавлена колонна
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
