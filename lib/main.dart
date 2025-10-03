@@ -22,7 +22,9 @@ class MyApp extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 20),
+
+              const SizedBox(width: 50),
+
               ElevatedButton(
                 onPressed: null,
                 style: ButtonStyle(
