@@ -49,9 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
               'Ляхов Тимофей Алексеевич',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                fontSize: 20,
+                color: Colors.red,
               ),
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.left,
             ),
             const SizedBox(height: 15),
             Text(
