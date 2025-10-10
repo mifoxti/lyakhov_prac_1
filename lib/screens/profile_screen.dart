@@ -17,6 +17,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'В работе'
   ];
 
+  final List<Map<String, dynamic>> _playlists = [
+    {'id': 1, 'name': 'Любимые треки', 'count': 125},
+    {'id': 2, 'name': 'Топ 2024', 'count': 50},
+    {'id': 3, 'name': 'Для релакса', 'count': 30},
+    {'id': 4, 'name': 'Тренировка', 'count': 45},
+    {'id': 5, 'name': 'Дорожные хиты', 'count': 60},
+  ];
+
+  int _nextId = 6;
+  final TextEditingController _playlistNameController = TextEditingController();
+
   void _changeStatus() {
     setState(() {
       _currentStatusIndex = (_currentStatusIndex + 1) % _statuses.length;
@@ -29,6 +40,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _addNewPlaylist() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Создать плейлист',
+            style: TextStyle(color: Colors.deepPurple),
+          ),
+          content: TextField(
+            controller: _playlistNameController,
+            decoration: const InputDecoration(
+              hintText: 'Введите название плейлиста',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _playlistNameController.clear();
+              },
+              child: const Text(
+                'Отмена',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final playlistName = _playlistNameController.text.trim();
+                if (playlistName.isNotEmpty) {
+                  setState(() {
+                    _playlists.add({
+                      'id': _nextId++,
+                      'name': playlistName,
+                      'count': 0,
+                    });
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Плейлист "$playlistName" создан'),
+                      backgroundColor: Colors.deepPurple,
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                  _playlistNameController.clear();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+              ),
+              child: const Text(
+                'Создать',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _playlistNameController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,141 +117,204 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Аватар пользователя
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.deepPurple[100],
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.deepPurple, width: 3),
-              ),
-              child: const Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 20),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
 
-            // Имя пользователя
-            const Text(
-              'Тимофей Ляхов',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Текущий статус
-            Text(
-              _statuses[_currentStatusIndex],
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.deepPurple[700],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Статистика
-            const Text(
-              'Музыкальная статистика:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem('5', 'Плейлистов'),
-                _buildStatItem('25', 'Найдено треков'),
-                _buildStatItem('128', 'Всего треков'),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildStatItem('28', 'Часов'),
-                _buildStatItem('15', 'Исполнителей'),
-                _buildStatItem('8', 'Альбомов'),
-              ],
-            ),
-            const SizedBox(height: 40),
-
-            // Кнопка "Сменить статус"
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: _changeStatus,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-                child: const Text(
-                  'Сменить статус',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+                  // Аватар пользователя
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple[100],
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.deepPurple, width: 3),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      size: 60,
+                      color: Colors.deepPurple,
+                    ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-            // Настройки
-            const Text(
-              'Настройки аккаунта:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 15),
-
-            _buildSettingItem('Редактировать профиль', Icons.edit),
-            _buildSettingItem('Настройки приватности', Icons.security),
-            _buildSettingItem('Качество звука', Icons.volume_up),
-            _buildSettingItem('Уведомления', Icons.notifications),
-            const SizedBox(height: 20),
-
-            // Кнопка "Вернуться на главный экран"
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple[300],
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-                child: Text(
-                  'Вернуться на главный экран',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.deepPurple[900],
+                  // Имя пользователя
+                  const Text(
+                    'Тимофей Ляхов',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  const SizedBox(height: 10),
+
+                  // Текущий статус
+                  Text(
+                    _statuses[_currentStatusIndex],
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.deepPurple[700],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Статистика
+                  const Text(
+                    'Музыкальная статистика:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem('${_playlists.length}', 'Плейлистов'),
+                      _buildStatItem('25', 'Найдено треков'),
+                      _buildStatItem('128', 'Всего треков'),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem('28', 'Часов'),
+                      _buildStatItem('15', 'Исполнителей'),
+                      _buildStatItem('8', 'Альбомов'),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Кнопка "Сменить статус"
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: _changeStatus,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: const Text(
+                        'Сменить статус',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Заголовок и кнопка добавления плейлиста
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Мои плейлисты:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: _addNewPlaylist,
+                          icon: const Icon(Icons.add_circle, color: Colors.deepPurple, size: 30),
+                          tooltip: 'Добавить плейлист',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  // Список плейлистов - внутренний SingleChildScrollView
+                  SingleChildScrollView(
+                    child: Column(
+                      children: _playlists
+                          .map(
+                            (playlist) => Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.queue_music, color: Colors.deepPurple),
+                              title: Text(playlist['name']),
+                              subtitle: Text('${playlist['count']} треков'),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () {
+                                  setState(() {
+                                    _playlists.remove(playlist);
+                                  });
+                                },
+                              ),
+                            ),
+                            const Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ],
+                        ),
+                      )
+                          .toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Настройки
+                  const Text(
+                    'Настройки аккаунта:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  _buildSettingItem('Редактировать профиль', Icons.edit),
+                  _buildSettingItem('Настройки приватности', Icons.security),
+                  _buildSettingItem('Качество звука', Icons.volume_up),
+                  _buildSettingItem('Уведомления', Icons.notifications),
+                  const SizedBox(height: 20),
+
+                  // Кнопка "Вернуться на главный экран"
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple[300],
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      child: Text(
+                        'Вернуться на главный экран',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.deepPurple[900],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
