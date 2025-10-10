@@ -9,29 +9,34 @@ class PlayerScreen extends StatefulWidget {
 
 class _PlayerScreenState extends State<PlayerScreen> {
   int _currentTrackIndex = 0;
-  final List<Map<String, String>> _tracks = [
+  final List<Map<String, dynamic>> _tracks = [
     {
+      'id': 1,
       'title': 'Perfect Symphony',
       'artist': 'Ed Sheeran & Andrea Bocelli',
       'duration': '4:20'
     },
     {
+      'id': 2,
       'title': 'Blinding Lights',
       'artist': 'The Weeknd',
       'duration': '3:22'
     },
     {
+      'id': 3,
       'title': 'Shape of You',
       'artist': 'Ed Sheeran',
       'duration': '3:53'
     },
     {
+      'id': 4,
       'title': 'Dance Monkey',
       'artist': 'Tones and I',
       'duration': '3:29'
     },
   ];
 
+  int _nextId = 5;
   final TextEditingController _trackTitleController = TextEditingController();
   final TextEditingController _trackArtistController = TextEditingController();
   final TextEditingController _trackDurationController = TextEditingController();
@@ -110,6 +115,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 if (title.isNotEmpty && artist.isNotEmpty && duration.isNotEmpty) {
                   setState(() {
                     _tracks.add({
+                      'id': _nextId++,
                       'title': title,
                       'artist': artist,
                       'duration': duration,
@@ -202,6 +208,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 if (title.isNotEmpty && artist.isNotEmpty && duration.isNotEmpty) {
                   setState(() {
                     _tracks[index] = {
+                      'id': _tracks[index]['id'], // Сохраняем существующий ID
                       'title': title,
                       'artist': artist,
                       'duration': duration,
@@ -385,7 +392,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             ),
             const SizedBox(height: 15),
 
-            // Список треков с ListView.separated
+            // Список треков с ListView.separated и уникальными ключами
             _tracks.isEmpty
                 ? const Padding(
               padding: EdgeInsets.all(20.0),
@@ -408,6 +415,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               itemBuilder: (context, index) {
                 final track = _tracks[index];
                 return ListTile(
+                  key: Key('track_${track['id']}'), // Уникальный ключ для каждого элемента
                   leading: Icon(
                     Icons.music_note,
                     color: index == _currentTrackIndex
