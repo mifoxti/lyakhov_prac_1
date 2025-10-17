@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../library/screens/library_screen.dart';
 import '../../player/screens/player_screen.dart';
+import '../../player/state/player_container.dart';
 import '../../search/screens/search_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 
@@ -38,7 +39,7 @@ class HomeScreen extends StatelessWidget {
             _buildNavigationButton(
               context,
               '▶️ Плеер',
-              const PlayerScreen(),
+              PlayerContainer.withScreen(),
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(

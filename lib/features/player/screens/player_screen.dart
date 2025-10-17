@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/player_model.dart';
-import '../state/player_container.dart';
 import '../widgets/player_table.dart';
 import 'player_form_screen.dart';
+import '../state/player_container.dart';
 
 class PlayerScreen extends StatelessWidget {
-  const PlayerScreen({super.key});
+  final PlayerController container;
+  final VoidCallback onAddTap; // добавляем этот колбэк
+
+  const PlayerScreen({
+    super.key,
+    required this.container,
+    required this.onAddTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final player = context.watch<PlayerContainer>();
+    final player = container;
 
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
@@ -23,7 +29,7 @@ class PlayerScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            _buildCurrentTrackSection(context, player),
+            _buildCurrentTrackSection(player),
             const SizedBox(height: 30),
             const Text(
               'Следующие треки:',
@@ -39,16 +45,7 @@ class PlayerScreen extends StatelessWidget {
               currentIndex: player.currentIndex,
               onEdit: (index) {
                 final track = player.tracks[index];
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PlayerFormScreen(
-                      existingTrack: track,
-                      onSave: (updatedTrack) =>
-                          player.editTrack(index, updatedTrack),
-                    ),
-                  ),
-                );
+                container.showForm(track); // редактирование через контейнер
               },
               onDelete: player.removeTrack,
               onSelect: player.selectTrack,
@@ -58,7 +55,8 @@ class PlayerScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple[300],
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                padding:
+                const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
               ),
               child: Text(
                 'Вернуться на главный экран',
@@ -70,22 +68,13 @@ class PlayerScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => PlayerFormScreen(
-                onSave: player.addTrack,
-              ),
-            ),
-          );
-        },
+        onPressed: onAddTap, // добавляем вызов колбэка для добавления
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildCurrentTrackSection(BuildContext context, PlayerContainer player) {
+  Widget _buildCurrentTrackSection(PlayerController player) {
     final track = player.currentTrack;
 
     return Column(
@@ -104,7 +93,8 @@ class PlayerScreen extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(Icons.music_note, size: 80, color: Colors.deepPurple),
+          child:
+          const Icon(Icons.music_note, size: 80, color: Colors.deepPurple),
         ),
         const SizedBox(height: 20),
         Text(
