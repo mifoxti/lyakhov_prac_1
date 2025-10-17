@@ -4,7 +4,7 @@ class Track {
   final String artist;
   final String duration;
 
-  Track({
+  const Track({
     required this.id,
     required this.title,
     required this.artist,
@@ -25,25 +25,19 @@ class Track {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title': title,
-      'artist': artist,
-      'duration': duration,
-    };
-  }
-
   factory Track.fromMap(Map<String, dynamic> map) {
     return Track(
-      id: map['id'],
-      title: map['title'],
-      artist: map['artist'],
-      duration: map['duration'],
+      id: map['id'] as int,
+      title: map['title'] as String,
+      artist: map['artist'] as String,
+      duration: map['duration'] as String,
     );
   }
+
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'title': title,
+    'artist': artist,
+    'duration': duration,
+  };
 }
-
-
-
-
