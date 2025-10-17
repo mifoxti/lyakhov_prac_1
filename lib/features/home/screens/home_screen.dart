@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'library_screen.dart';
-import 'player_screen.dart';
-import 'search_screen.dart';
-import 'profile_screen.dart';
+import '../../library/screens/library_screen.dart';
+import '../../player/screens/player_screen.dart';
+import '../../search/screens/search_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

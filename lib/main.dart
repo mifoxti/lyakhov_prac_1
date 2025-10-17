@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'features/home/screens/home_screen.dart';
 
 void main() {
   runApp(const MiMusicApp());
