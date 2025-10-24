@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -27,6 +28,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   int _nextId = 6;
   final TextEditingController _playlistNameController = TextEditingController();
+
+  // URL для аватарки профиля
+  final String _profileImageUrl = 'https://i.pinimg.com/736x/0a/ba/41/0aba4155e6ae9d116d25bf83c4eac798.jpg';
 
   void _changeStatus() {
     setState(() {
@@ -125,19 +129,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const SizedBox(height: 20),
 
-                  // Аватар пользователя
+                  // Аватар пользователя в рамке
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: 140,
+                    height: 140,
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple[100],
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.deepPurple, width: 3),
+                      gradient: const LinearGradient(
+                        colors: [Colors.purple, Colors.deepPurple, Colors.blue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(70),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepPurple.withOpacity(0.5),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.deepPurple,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(62),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 3,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(59),
+                        child: CachedNetworkImage(
+                          imageUrl: _profileImageUrl,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder: (context, url, progress) =>
+                              Container(
+                                color: Colors.deepPurple[100],
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                                  ),
+                                ),
+                              ),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.deepPurple[100],
+                            child: const Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
