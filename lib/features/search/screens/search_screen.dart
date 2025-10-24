@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -39,6 +40,50 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Добавленная картинка сверху
+            Container(
+              margin: const EdgeInsets.only(bottom: 20),
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.deepPurple.withOpacity(0.3),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: CachedNetworkImage(
+                  imageUrl: 'https://allforjoomla.ru/images/stories/b31ed032e74680d8aaae22c5fdf.jpg',
+                  fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, progress) =>
+                      Container(
+                        color: Colors.deepPurple[100],
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                          ),
+                        ),
+                      ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.deepPurple[100],
+                    child: const Center(
+                      child: Icon(
+                        Icons.music_note,
+                        size: 50,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             // Текущее количество результатов
             Text(
               'Найдено треков:',
