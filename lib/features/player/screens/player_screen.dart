@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/player_model.dart';
 import '../widgets/player_table.dart';
 import 'player_form_screen.dart';
@@ -6,7 +7,7 @@ import '../state/player_container.dart';
 
 class PlayerScreen extends StatelessWidget {
   final PlayerController container;
-  final VoidCallback onAddTap; // добавляем этот колбэк
+  final VoidCallback onAddTap;
 
   const PlayerScreen({
     super.key,
@@ -45,7 +46,7 @@ class PlayerScreen extends StatelessWidget {
               currentIndex: player.currentIndex,
               onEdit: (index) {
                 final track = player.tracks[index];
-                container.showForm(track); // редактирование через контейнер
+                container.showForm(track);
               },
               onDelete: player.removeTrack,
               onSelect: player.selectTrack,
@@ -68,7 +69,7 @@ class PlayerScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
-        onPressed: onAddTap, // добавляем вызов колбэка для добавления
+        onPressed: onAddTap,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -76,6 +77,8 @@ class PlayerScreen extends StatelessWidget {
 
   Widget _buildCurrentTrackSection(PlayerController player) {
     final track = player.currentTrack;
+    // URL картинки по умолчанию
+    final String defaultImageUrl = 'https://avatars.yandex.net/get-music-content/14369544/2cf8dc1c.a.35846952-2/300x300';
 
     return Column(
       children: [
@@ -83,7 +86,6 @@ class PlayerScreen extends StatelessWidget {
           width: 250,
           height: 250,
           decoration: BoxDecoration(
-            color: Colors.deepPurple[100],
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -93,8 +95,32 @@ class PlayerScreen extends StatelessWidget {
               ),
             ],
           ),
-          child:
-          const Icon(Icons.music_note, size: 80, color: Colors.deepPurple),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: CachedNetworkImage(
+              imageUrl: track?.imageUrl ?? defaultImageUrl,
+              fit: BoxFit.cover,
+              progressIndicatorBuilder: (context, url, progress) =>
+                  Container(
+                    color: Colors.deepPurple[100],
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                      ),
+                    ),
+                  ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.deepPurple[100],
+                child: const Center(
+                  child: Icon(
+                    Icons.music_note,
+                    size: 80,
+                    color: Colors.deepPurple,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 20),
         Text(

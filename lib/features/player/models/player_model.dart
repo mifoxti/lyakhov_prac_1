@@ -3,12 +3,14 @@ class Track {
   final String title;
   final String artist;
   final String duration;
+  final String? imageUrl; // Добавляем поле для картинки
 
   const Track({
     required this.id,
     required this.title,
     required this.artist,
     required this.duration,
+    this.imageUrl, // Делаем необязательным
   });
 
   Track copyWith({
@@ -16,12 +18,14 @@ class Track {
     String? title,
     String? artist,
     String? duration,
+    String? imageUrl, // Добавляем в copyWith
   }) {
     return Track(
       id: id ?? this.id,
       title: title ?? this.title,
       artist: artist ?? this.artist,
       duration: duration ?? this.duration,
+      imageUrl: imageUrl ?? this.imageUrl, // Добавляем здесь
     );
   }
 
@@ -31,6 +35,7 @@ class Track {
       title: map['title'] as String,
       artist: map['artist'] as String,
       duration: map['duration'] as String,
+      imageUrl: map['imageUrl'] as String?, // Добавляем здесь
     );
   }
 
@@ -39,5 +44,6 @@ class Track {
     'title': title,
     'artist': artist,
     'duration': duration,
+    'imageUrl': imageUrl, // Добавляем здесь
   };
 }
