@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -172,6 +173,49 @@ class _LibraryScreenState extends State<LibraryScreen> {
       ),
       body: Column(
         children: [
+          // Добавленная картинка сверху
+          Container(
+            margin: const EdgeInsets.all(20),
+            height: 150,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.deepPurple.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: CachedNetworkImage(
+                imageUrl: 'https://i.pinimg.com/736x/7a/05/e2/7a05e28ac2cc660b976f03a70f84dba4.jpg',
+                fit: BoxFit.cover,
+                progressIndicatorBuilder: (context, url, progress) =>
+                    Container(
+                      color: Colors.deepPurple[100],
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                        ),
+                      ),
+                    ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.deepPurple[100],
+                  child: const Center(
+                    child: Icon(
+                      Icons.library_music,
+                      size: 60,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
           // Верхняя часть с информацией
           Padding(
             padding: const EdgeInsets.all(20.0),
