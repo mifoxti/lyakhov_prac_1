@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../library/screens/library_screen.dart';
 import '../../player/screens/player_screen.dart';
 import '../../player/state/player_container.dart';
@@ -27,6 +28,18 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
+              ),
+            ),
+            const SizedBox(height: 20),
+            CachedNetworkImage(
+              imageUrl: 'https://i.pinimg.com/736x/f9/63/6a/f9636a282f8d673219ddc29bdd742bd5.jpg',
+              progressIndicatorBuilder: (context, url, progress) =>
+              const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Center(
+                child: Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
               ),
             ),
             const SizedBox(height: 40),
