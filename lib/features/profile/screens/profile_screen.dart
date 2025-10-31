@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -29,7 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _nextId = 6;
   final TextEditingController _playlistNameController = TextEditingController();
 
-  // URL для аватарки профиля
   final String _profileImageUrl = 'https://i.pinimg.com/736x/0a/ba/41/0aba4155e6ae9d116d25bf83c4eac798.jpg';
 
   void _changeStatus() {
@@ -120,6 +120,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('Мой профиль'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: Column(
         children: [
@@ -128,8 +132,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-
-                  // Аватар пользователя в рамке
                   Container(
                     width: 140,
                     height: 140,
@@ -188,8 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // Имя пользователя
                   const Text(
                     'Тимофей Ляхов',
                     style: TextStyle(
@@ -199,8 +199,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
-                  // Текущий статус
                   Text(
                     _statuses[_currentStatusIndex],
                     style: TextStyle(
@@ -210,8 +208,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  // Статистика
                   const Text(
                     'Музыкальная статистика:',
                     style: TextStyle(
@@ -221,7 +217,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -231,7 +226,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -241,8 +235,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 40),
-
-                  // Кнопка "Сменить статус"
                   SizedBox(
                     width: 200,
                     child: ElevatedButton(
@@ -261,8 +253,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  // Заголовок и кнопка добавления плейлиста
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -285,8 +275,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-
-                  // Список плейлистов - внутренний SingleChildScrollView
                   SingleChildScrollView(
                     child: Column(
                       children: _playlists
@@ -317,8 +305,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-
-                  // Настройки
                   const Text(
                     'Настройки аккаунта:',
                     style: TextStyle(
@@ -328,19 +314,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-
                   _buildSettingItem('Редактировать профиль', Icons.edit),
                   _buildSettingItem('Настройки приватности', Icons.security),
                   _buildSettingItem('Качество звука', Icons.volume_up),
                   _buildSettingItem('Уведомления', Icons.notifications),
                   const SizedBox(height: 20),
-
-                  // Кнопка "Вернуться на главный экран"
                   SizedBox(
                     width: 200,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple[300],

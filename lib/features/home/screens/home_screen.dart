@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../library/screens/library_screen.dart';
-import '../../player/screens/player_screen.dart';
-import '../../player/state/player_container.dart';
-import '../../search/screens/search_screen.dart';
-import '../../profile/screens/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -46,25 +42,25 @@ class HomeScreen extends StatelessWidget {
             _buildNavigationButton(
               context,
               '🎵 Библиотека',
-              const LibraryScreen(),
+              '/library',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '▶️ Плеер',
-              PlayerContainer.withScreen(),
+              '/player',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '🔍 Поиск',
-              const SearchScreen(),
+              '/search',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '👤 Профиль',
-              const ProfileScreen(),
+              '/profile',
             ),
           ],
         ),
@@ -72,15 +68,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationButton(BuildContext context, String text, Widget screen) {
+  Widget _buildNavigationButton(BuildContext context, String text, String route) {
     return SizedBox(
       width: 200,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => screen),
-          );
+          context.push(route);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepPurple,

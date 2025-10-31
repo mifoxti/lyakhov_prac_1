@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -170,10 +171,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
         title: const Text('Моя библиотека'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: Column(
         children: [
-          // Добавленная картинка сверху
           Container(
             margin: const EdgeInsets.all(20),
             height: 150,
@@ -215,13 +219,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
               ),
             ),
           ),
-
-          // Верхняя часть с информацией
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                // Текущее количество плейлистов
                 Text(
                   'Количество плейлистов:',
                   style: TextStyle(
@@ -239,8 +240,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
-                // Кнопка "Добавить плейлист"
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
@@ -261,8 +260,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
               ],
             ),
           ),
-
-          // Список плейлистов
           Expanded(
             child: ListView.builder(
               itemCount: _playlists.length,
@@ -278,7 +275,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         color: Colors.deepPurple[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.queue_music, color: Colors.deepPurple),
+                      child: const Icon(Icons.queue_music, color: Colors.deepPurple),
                     ),
                     title: Text(
                       playlist['name'],
@@ -309,15 +306,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
               },
             ),
           ),
-
-          // Кнопка "Вернуться на главный экран"
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple[300],

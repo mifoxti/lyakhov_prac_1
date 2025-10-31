@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -35,12 +36,15 @@ class _SearchScreenState extends State<SearchScreen> {
         title: const Text('Поиск музыки'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Добавленная картинка сверху
             Container(
               margin: const EdgeInsets.only(bottom: 20),
               width: 120,
@@ -83,8 +87,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-
-            // Текущее количество результатов
             Text(
               'Найдено треков:',
               style: TextStyle(
@@ -102,8 +104,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 30),
-
-            // Поле поиска
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
@@ -120,8 +120,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 30),
-
-            // Кнопка "Найти больше"
             SizedBox(
               width: 200,
               child: ElevatedButton(
@@ -140,8 +138,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 15),
-
-            // Кнопка "Уменьшить результаты"
             SizedBox(
               width: 200,
               child: ElevatedButton(
@@ -160,8 +156,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 30),
-
-            // Популярные категории
             const Text(
               'Популярные категории:',
               style: TextStyle(
@@ -171,7 +165,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 15),
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Wrap(
@@ -189,13 +182,11 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 40),
-
-            // Кнопка "Вернуться на главный экран"
             SizedBox(
               width: 200,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple[300],

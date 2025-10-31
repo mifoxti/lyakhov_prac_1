@@ -4,7 +4,7 @@ import '../models/player_model.dart';
 class PlayerFormScreen extends StatefulWidget {
   final Track? existingTrack;
   final void Function(Track) onSave;
-  final VoidCallback onCancel; // добавляем этот колбэк
+  final VoidCallback onCancel;
 
   const PlayerFormScreen({
     super.key,
@@ -46,64 +46,79 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.existingTrack != null ? 'Редактировать трек' : 'Новый трек'),
-        backgroundColor: Colors.deepPurple,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                initialValue: _title,
-                decoration: const InputDecoration(labelText: 'Название трека'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Введите название' : null,
-                onSaved: (value) => _title = value!,
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.existingTrack != null ? 'Редактировать трек' : 'Новый трек',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
               ),
-              TextFormField(
-                initialValue: _artist,
-                decoration: const InputDecoration(labelText: 'Исполнитель'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Введите исполнителя' : null,
-                onSaved: (value) => _artist = value!,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: _title,
+              decoration: const InputDecoration(
+                labelText: 'Название трека',
+                border: OutlineInputBorder(),
               ),
-              TextFormField(
-                initialValue: _duration,
-                decoration: const InputDecoration(labelText: 'Длительность (мм:сс)'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Введите длительность' : null,
-                onSaved: (value) => _duration = value!,
+              validator: (value) =>
+              value == null || value.isEmpty ? 'Введите название' : null,
+              onSaved: (value) => _title = value!,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: _artist,
+              decoration: const InputDecoration(
+                labelText: 'Исполнитель',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: _save,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
-                    ),
-                    child: const Text('Сохранить', style: TextStyle(fontSize: 16)),
+              validator: (value) =>
+              value == null || value.isEmpty ? 'Введите исполнителя' : null,
+              onSaved: (value) => _artist = value!,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: _duration,
+              decoration: const InputDecoration(
+                labelText: 'Длительность (мм:сс)',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) =>
+              value == null || value.isEmpty ? 'Введите длительность' : null,
+              onSaved: (value) => _duration = value!,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: _save,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
                   ),
-                  ElevatedButton(
-                    onPressed: widget.onCancel,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 30),
-                    ),
-                    child: const Text('Отмена', style: TextStyle(fontSize: 16)),
+                  child: const Text('Сохранить', style: TextStyle(fontSize: 16)),
+                ),
+                ElevatedButton(
+                  onPressed: widget.onCancel,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 30),
                   ),
-                ],
-              ),
-            ],
-          ),
+                  child: const Text('Отмена', style: TextStyle(fontSize: 16)),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

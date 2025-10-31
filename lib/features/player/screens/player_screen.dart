@@ -1,36 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/player_model.dart';
 import '../widgets/player_table.dart';
 import 'player_form_screen.dart';
-import '../state/player_container.dart';
 
 class PlayerScreen extends StatelessWidget {
-  final PlayerController container;
-  final VoidCallback onAddTap;
+  final List<Track> tracks;
+  final int currentIndex;
+  final Track? currentTrack;
+  final VoidCallback onNextTrack;
+  final Function(int) onSelectTrack;
+  final Function(Track) onAddTrack;
+  final Function(int, Track) onEditTrack;
+  final Function(int) onRemoveTrack;
 
   const PlayerScreen({
     super.key,
-    required this.container,
-    required this.onAddTap,
+    required this.tracks,
+    required this.currentIndex,
+    required this.currentTrack,
+    required this.onNextTrack,
+    required this.onSelectTrack,
+    required this.onAddTrack,
+    required this.onEditTrack,
+    required this.onRemoveTrack,
   });
+
+  void _showAddForm(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: PlayerFormScreen(
+          existingTrack: null,
+          onSave: (track) {
+            onAddTrack(track);
+            Navigator.of(context).pop();
+          },
+          onCancel: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
+
+  void _showEditForm(BuildContext context, int index, Track track) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: PlayerFormScreen(
+          existingTrack: track,
+          onSave: (updatedTrack) {
+            onEditTrack(index, updatedTrack);
+            Navigator.of(context).pop();
+          },
+          onCancel: () => Navigator.of(context).pop(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final player = container;
-
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
         title: const Text('Сейчас играет'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 20),
-            _buildCurrentTrackSection(player),
+            _buildCurrentTrackSection(),
             const SizedBox(height: 30),
             const Text(
               'Следующие треки:',
@@ -42,18 +96,18 @@ class PlayerScreen extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             PlayerTable(
-              tracks: player.tracks,
-              currentIndex: player.currentIndex,
+              tracks: tracks,
+              currentIndex: currentIndex,
               onEdit: (index) {
-                final track = player.tracks[index];
-                container.showForm(track);
+                final track = tracks[index];
+                _showEditForm(context, index, track);
               },
-              onDelete: player.removeTrack,
-              onSelect: player.selectTrack,
+              onDelete: onRemoveTrack,
+              onSelect: onSelectTrack,
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple[300],
                 padding:
@@ -69,15 +123,13 @@ class PlayerScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
-        onPressed: onAddTap,
+        onPressed: () => _showAddForm(context),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildCurrentTrackSection(PlayerController player) {
-    final track = player.currentTrack;
-    // URL картинки по умолчанию
+  Widget _buildCurrentTrackSection() {
     final String defaultImageUrl = 'https://avatars.yandex.net/get-music-content/14369544/2cf8dc1c.a.35846952-2/300x300';
 
     return Column(
@@ -98,7 +150,7 @@ class PlayerScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: CachedNetworkImage(
-              imageUrl: track?.imageUrl ?? defaultImageUrl,
+              imageUrl: currentTrack?.imageUrl ?? defaultImageUrl,
               fit: BoxFit.cover,
               progressIndicatorBuilder: (context, url, progress) =>
                   Container(
@@ -124,23 +176,23 @@ class PlayerScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Text(
-          track?.title ?? 'Нет треков',
+          currentTrack?.title ?? 'Нет треков',
           style: const TextStyle(
               fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
         ),
         const SizedBox(height: 10),
         Text(
-          track?.artist ?? 'Добавьте треки',
+          currentTrack?.artist ?? 'Добавьте треки',
           style: TextStyle(fontSize: 16, color: Colors.deepPurple[700]),
         ),
         const SizedBox(height: 5),
         Text(
-          track == null ? '' : 'Длительность: ${track.duration}',
+          currentTrack == null ? '' : 'Длительность: ${currentTrack!.duration}',
           style: TextStyle(fontSize: 14, color: Colors.deepPurple[600]),
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: track == null ? null : player.nextTrack,
+          onPressed: tracks.isEmpty ? null : onNextTrack,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.deepPurple,
             padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
