@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'app_router.dart';
 import 'features/library/screens/library_screen.dart';
 import 'features/player/state/player_container.dart';
 import 'features/search/screens/search_screen.dart';
@@ -13,14 +15,14 @@ class MiMusicApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'MiMusic',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      routerConfig: appRouter,
     );
   }
 }
