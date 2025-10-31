@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import '../models/player_model.dart';
 import '../widgets/player_table.dart';
-import '../screens/player_form_screen.dart';
 
 class PlayerScreen extends StatelessWidget {
   final List<Track> tracks;
@@ -60,10 +60,7 @@ class PlayerScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
         onPressed: () async {
-          final Track? newTrack = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const PlayerFormScreen()),
-          );
+          final Track? newTrack = await context.pushNamed('track-form');
           if (newTrack != null) {
             onAddTrack(newTrack);
           }
@@ -74,7 +71,8 @@ class PlayerScreen extends StatelessWidget {
   }
 
   Widget _buildCurrentTrackSection() {
-    final String defaultImageUrl = 'https://avatars.yandex.net/get-music-content/14369544/2cf8dc1c.a.35846952-2/300x300';
+    final String defaultImageUrl =
+        'https://avatars.yandex.net/get-music-content/14369544/2cf8dc1c.a.35846952-2/300x300';
 
     return Column(
       children: [
@@ -96,15 +94,15 @@ class PlayerScreen extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: currentTrack?.imageUrl ?? defaultImageUrl,
               fit: BoxFit.cover,
-              progressIndicatorBuilder: (context, url, progress) =>
-                  Container(
-                    color: Colors.deepPurple[100],
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
-                      ),
-                    ),
+              progressIndicatorBuilder: (context, url, progress) => Container(
+                color: Colors.deepPurple[100],
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                    AlwaysStoppedAnimation<Color>(Colors.deepPurple),
                   ),
+                ),
+              ),
               errorWidget: (context, url, error) => Container(
                 color: Colors.deepPurple[100],
                 child: const Center(

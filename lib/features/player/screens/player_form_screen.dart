@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/player_model.dart';
 
 class PlayerFormScreen extends StatefulWidget {
-  final Track? existingTrack;
+  final dynamic existingTrack;
 
   const PlayerFormScreen({
     super.key,
@@ -22,9 +23,15 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
   @override
   void initState() {
     super.initState();
-    _title = widget.existingTrack?.title ?? '';
-    _artist = widget.existingTrack?.artist ?? '';
-    _duration = widget.existingTrack?.duration ?? '';
+    if (widget.existingTrack != null && widget.existingTrack is Track) {
+      _title = widget.existingTrack.title ?? '';
+      _artist = widget.existingTrack.artist ?? '';
+      _duration = widget.existingTrack.duration ?? '';
+    } else {
+      _title = '';
+      _artist = '';
+      _duration = '';
+    }
   }
 
   void _save() {
@@ -36,7 +43,7 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
         artist: _artist,
         duration: _duration,
       );
-      Navigator.pop(context, track);
+      context.pop(track);
     }
   }
 
@@ -56,7 +63,7 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Padding(
@@ -118,7 +125,7 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
                     child: const Text('Сохранить', style: TextStyle(fontSize: 16)),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
                       padding: const EdgeInsets.symmetric(

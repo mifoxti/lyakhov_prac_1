@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/player_model.dart';
 import '../screens/player_screen.dart';
-import '../screens/player_form_screen.dart';
 
 class PlayerContainer extends StatefulWidget {
   const PlayerContainer({super.key});
@@ -108,9 +108,9 @@ class _PlayerContainerState extends State<PlayerContainer> {
       onEditTrack: editTrack,
       onRemoveTrack: removeTrack,
       onEditTap: (index) async {
-        final Track? updatedTrack = await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => PlayerFormScreen(existingTrack: tracks[index])),
+        final Track? updatedTrack = await context.push(
+          '/player/track-form',
+          extra: tracks[index],
         );
         if (updatedTrack != null) {
           editTrack(index, updatedTrack);
