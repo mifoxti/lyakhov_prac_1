@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -27,7 +28,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ];
 
   int _nextId = 6;
-  final TextEditingController _playlistNameController = TextEditingController();
 
   final String _profileImageUrl = 'https://i.pinimg.com/736x/0a/ba/41/0aba4155e6ae9d116d25bf83c4eac798.jpg';
 
@@ -43,72 +43,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _addNewPlaylist() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Создать плейлист',
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          content: TextField(
-            controller: _playlistNameController,
-            decoration: const InputDecoration(
-              hintText: 'Введите название плейлиста',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _playlistNameController.clear();
-              },
-              child: const Text(
-                'Отмена',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final playlistName = _playlistNameController.text.trim();
-                if (playlistName.isNotEmpty) {
-                  setState(() {
-                    _playlists.add({
-                      'id': _nextId++,
-                      'name': playlistName,
-                      'count': 0,
-                    });
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Плейлист "$playlistName" создан'),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  _playlistNameController.clear();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-              ),
-              child: const Text(
-                'Создать',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
+  void _addNewPlaylist() async {
+    final Map<String, dynamic>? newPlaylist = await context.push(
+      '/library/playlist-form',
     );
+
+    if (newPlaylist != null) {
+      setState(() {
+        _playlists.add({
+          'id': _nextId++,
+          'name': newPlaylist['name'],
+          'count': 0,
+        });
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Плейлист "${newPlaylist['name']}" создан'),
+          backgroundColor: Colors.deepPurple,
+        ),
+      );
+    }
   }
 
-  @override
-  void dispose() {
-    _playlistNameController.dispose();
-    super.dispose();
+  void _removePlaylist(Map<String, dynamic> playlist) {
+    setState(() {
+      _playlists.remove(playlist);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Плейлист "${playlist['name']}" удален'),
+        backgroundColor: Colors.deepPurple[300],
+      ),
+    );
   }
 
   @override
@@ -265,34 +231,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: _playlists
-                          .map(
-                            (playlist) => Column(
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.queue_music, color: Colors.deepPurple),
-                              title: Text(playlist['name']),
-                              subtitle: Text('${playlist['count']} треков'),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  setState(() {
-                                    _playlists.remove(playlist);
-                                  });
-                                },
-                              ),
+                  Column(
+                    children: _playlists
+                        .map(
+                          (playlist) => Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.queue_music, color: Colors.deepPurple),
+                            title: Text(playlist['name']),
+                            subtitle: Text('${playlist['count']} треков'),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _removePlaylist(playlist),
                             ),
-                            const Divider(
-                              color: Colors.grey,
-                              height: 1,
-                            ),
-                          ],
-                        ),
-                      )
-                          .toList(),
-                    ),
+                          ),
+                          const Divider(
+                            color: Colors.grey,
+                            height: 1,
+                          ),
+                        ],
+                      ),
+                    )
+                        .toList(),
                   ),
                   const SizedBox(height: 30),
                   const Text(
