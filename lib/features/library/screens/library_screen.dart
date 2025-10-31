@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'playlist_form_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -21,10 +21,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   int _nextId = 6;
 
   void _addPlaylist() async {
-    final Map<String, dynamic>? newPlaylist = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const PlaylistFormScreen()),
-    );
+    final Map<String, dynamic>? newPlaylist = await context.pushNamed('playlist-form');
 
     if (newPlaylist != null) {
       setState(() {
@@ -44,11 +41,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
 
   void _editPlaylist(int index) async {
-    final Map<String, dynamic>? updatedPlaylist = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => PlaylistFormScreen(existingPlaylist: _playlists[index]),
-      ),
+    final Map<String, dynamic>? updatedPlaylist = await context.pushNamed(
+      'playlist-form',
+      extra: _playlists[index],
     );
 
     if (updatedPlaylist != null) {
@@ -100,17 +95,18 @@ class _LibraryScreenState extends State<LibraryScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: CachedNetworkImage(
-                imageUrl: 'https://i.pinimg.com/736x/7a/05/e2/7a05e28ac2cc660b976f03a70f84dba4.jpg',
+                imageUrl:
+                'https://i.pinimg.com/736x/7a/05/e2/7a05e28ac2cc660b976f03a70f84dba4.jpg',
                 fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, progress) =>
-                    Container(
-                      color: Colors.deepPurple[100],
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
-                        ),
-                      ),
+                progressIndicatorBuilder: (context, url, progress) => Container(
+                  color: Colors.deepPurple[100],
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.deepPurple),
                     ),
+                  ),
+                ),
                 errorWidget: (context, url, error) => Container(
                   color: Colors.deepPurple[100],
                   child: const Center(
@@ -171,7 +167,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
               itemBuilder: (context, index) {
                 final playlist = _playlists[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  margin:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: ListTile(
                     leading: Container(
                       width: 40,
@@ -180,7 +177,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         color: Colors.deepPurple[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.queue_music, color: Colors.deepPurple),
+                      child: const Icon(Icons.queue_music,
+                          color: Colors.deepPurple),
                     ),
                     title: Text(
                       playlist['name'],

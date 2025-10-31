@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PlaylistFormScreen extends StatefulWidget {
   final Map<String, dynamic>? existingPlaylist;
@@ -27,7 +28,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
       final playlistData = {
         'name': _nameController.text.trim(),
       };
-      Navigator.pop(context, playlistData);
+      context.pop(playlistData);
     }
   }
 
@@ -53,7 +54,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Padding(
@@ -91,7 +92,7 @@ class _PlaylistFormScreenState extends State<PlaylistFormScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
                       padding: const EdgeInsets.symmetric(
