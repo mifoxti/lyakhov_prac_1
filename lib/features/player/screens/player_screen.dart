@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/player_model.dart';
 import '../widgets/player_table.dart';
-import 'player_form_screen.dart';
+import '../screens/player_form_screen.dart';
 
 class PlayerScreen extends StatelessWidget {
   final List<Track> tracks;
@@ -13,6 +13,7 @@ class PlayerScreen extends StatelessWidget {
   final Function(Track) onAddTrack;
   final Function(int, Track) onEditTrack;
   final Function(int) onRemoveTrack;
+  final Function(int) onEditTap;
 
   const PlayerScreen({
     super.key,
@@ -24,47 +25,8 @@ class PlayerScreen extends StatelessWidget {
     required this.onAddTrack,
     required this.onEditTrack,
     required this.onRemoveTrack,
+    required this.onEditTap,
   });
-
-  void _showAddForm(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: PlayerFormScreen(
-          existingTrack: null,
-          onSave: (track) {
-            onAddTrack(track);
-            Navigator.of(context).pop();
-          },
-          onCancel: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
-  }
-
-  void _showEditForm(BuildContext context, int index, Track track) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: PlayerFormScreen(
-          existingTrack: track,
-          onSave: (updatedTrack) {
-            onEditTrack(index, updatedTrack);
-            Navigator.of(context).pop();
-          },
-          onCancel: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +50,7 @@ class PlayerScreen extends StatelessWidget {
             PlayerTable(
               tracks: tracks,
               currentIndex: currentIndex,
-              onEdit: (index) {
-                final track = tracks[index];
-                _showEditForm(context, index, track);
-              },
+              onEdit: (index) => onEditTap(index),
               onDelete: onRemoveTrack,
               onSelect: onSelectTrack,
             ),
@@ -100,7 +59,15 @@ class PlayerScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
-        onPressed: () => _showAddForm(context),
+        onPressed: () async {
+          final Track? newTrack = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PlayerFormScreen()),
+          );
+          if (newTrack != null) {
+            onAddTrack(newTrack);
+          }
+        },
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

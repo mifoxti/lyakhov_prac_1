@@ -107,6 +107,15 @@ class _PlayerContainerState extends State<PlayerContainer> {
       onAddTrack: addTrack,
       onEditTrack: editTrack,
       onRemoveTrack: removeTrack,
+      onEditTap: (index) async {
+        final Track? updatedTrack = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => PlayerFormScreen(existingTrack: tracks[index])),
+        );
+        if (updatedTrack != null) {
+          editTrack(index, updatedTrack);
+        }
+      },
     );
   }
 }

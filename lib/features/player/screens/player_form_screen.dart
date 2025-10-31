@@ -3,14 +3,10 @@ import '../models/player_model.dart';
 
 class PlayerFormScreen extends StatefulWidget {
   final Track? existingTrack;
-  final void Function(Track) onSave;
-  final VoidCallback onCancel;
 
   const PlayerFormScreen({
     super.key,
     this.existingTrack,
-    required this.onSave,
-    required this.onCancel,
   });
 
   @override
@@ -40,85 +36,100 @@ class _PlayerFormScreenState extends State<PlayerFormScreen> {
         artist: _artist,
         duration: _duration,
       );
-      widget.onSave(track);
+      Navigator.pop(context, track);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              widget.existingTrack != null ? 'Редактировать трек' : 'Новый трек',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _title,
-              decoration: const InputDecoration(
-                labelText: 'Название трека',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) =>
-              value == null || value.isEmpty ? 'Введите название' : null,
-              onSaved: (value) => _title = value!,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _artist,
-              decoration: const InputDecoration(
-                labelText: 'Исполнитель',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) =>
-              value == null || value.isEmpty ? 'Введите исполнителя' : null,
-              onSaved: (value) => _artist = value!,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _duration,
-              decoration: const InputDecoration(
-                labelText: 'Длительность (мм:сс)',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) =>
-              value == null || value.isEmpty ? 'Введите длительность' : null,
-              onSaved: (value) => _duration = value!,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _save,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                  ),
-                  child: const Text('Сохранить', style: TextStyle(fontSize: 16)),
+    return Scaffold(
+      backgroundColor: Colors.deepPurple[50],
+      appBar: AppBar(
+        title: Text(
+          widget.existingTrack != null ? 'Редактировать трек' : 'Новый трек',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                initialValue: _title,
+                decoration: const InputDecoration(
+                  labelText: 'Название трека',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-                ElevatedButton(
-                  onPressed: widget.onCancel,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 30),
-                  ),
-                  child: const Text('Отмена', style: TextStyle(fontSize: 16)),
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Введите название' : null,
+                onSaved: (value) => _title = value!,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _artist,
+                decoration: const InputDecoration(
+                  labelText: 'Исполнитель',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-              ],
-            ),
-          ],
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Введите исполнителя' : null,
+                onSaved: (value) => _artist = value!,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _duration,
+                decoration: const InputDecoration(
+                  labelText: 'Длительность (мм:сс)',
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Введите длительность' : null,
+                onSaved: (value) => _duration = value!,
+              ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: _save,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 30),
+                    ),
+                    child: const Text('Сохранить', style: TextStyle(fontSize: 16)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 30),
+                    ),
+                    child: const Text('Отмена', style: TextStyle(fontSize: 16)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
