@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -32,15 +31,6 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
-      appBar: AppBar(
-        title: const Text('Поиск музыки'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -179,27 +169,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   _buildCategoryChip('Джаз'),
                   _buildCategoryChip('Классика'),
                 ],
-              ),
-            ),
-            const SizedBox(height: 40),
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  context.pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple[300],
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-                child: Text(
-                  'Вернуться на главный экран',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.deepPurple[900],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
               ),
             ),
           ],

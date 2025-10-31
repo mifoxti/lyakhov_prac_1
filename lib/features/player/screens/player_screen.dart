@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/player_model.dart';
 import '../widgets/player_table.dart';
@@ -71,15 +70,6 @@ class PlayerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
-      appBar: AppBar(
-        title: const Text('Сейчас играет'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -104,19 +94,6 @@ class PlayerScreen extends StatelessWidget {
               },
               onDelete: onRemoveTrack,
               onSelect: onSelectTrack,
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () => context.pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple[300],
-                padding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-              ),
-              child: Text(
-                'Вернуться на главный экран',
-                style: TextStyle(fontSize: 16, color: Colors.deepPurple[900]),
-              ),
             ),
           ],
         ),

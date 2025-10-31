@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -116,15 +115,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
-      appBar: AppBar(
-        title: const Text('Мой профиль'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
       body: Column(
         children: [
           Expanded(
@@ -318,27 +308,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSettingItem('Настройки приватности', Icons.security),
                   _buildSettingItem('Качество звука', Icons.volume_up),
                   _buildSettingItem('Уведомления', Icons.notifications),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple[300],
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                      ),
-                      child: Text(
-                        'Вернуться на главный экран',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.deepPurple[900],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                 ],
               ),
