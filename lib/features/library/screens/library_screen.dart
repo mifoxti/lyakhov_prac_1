@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'playlist_form_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});
@@ -18,128 +19,49 @@ class _LibraryScreenState extends State<LibraryScreen> {
   ];
 
   int _nextId = 6;
-  final TextEditingController _playlistNameController = TextEditingController();
-  final TextEditingController _editPlaylistNameController = TextEditingController();
 
-  void _addPlaylist() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Создать плейлист',
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          content: TextField(
-            controller: _playlistNameController,
-            decoration: const InputDecoration(
-              hintText: 'Введите название плейлиста',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _playlistNameController.clear();
-              },
-              child: const Text(
-                'Отмена',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final playlistName = _playlistNameController.text.trim();
-                if (playlistName.isNotEmpty) {
-                  setState(() {
-                    _playlists.add({
-                      'id': _nextId++,
-                      'name': playlistName,
-                      'count': 0,
-                    });
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Плейлист "$playlistName" создан'),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  _playlistNameController.clear();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-              ),
-              child: const Text(
-                'Создать',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
+  void _addPlaylist() async {
+    final Map<String, dynamic>? newPlaylist = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PlaylistFormScreen()),
     );
+
+    if (newPlaylist != null) {
+      setState(() {
+        _playlists.add({
+          'id': _nextId++,
+          'name': newPlaylist['name'],
+          'count': 0,
+        });
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Плейлист "${newPlaylist['name']}" создан'),
+          backgroundColor: Colors.deepPurple,
+        ),
+      );
+    }
   }
 
-  void _editPlaylist(int index) {
-    _editPlaylistNameController.text = _playlists[index]['name'];
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Редактировать плейлист',
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          content: TextField(
-            controller: _editPlaylistNameController,
-            decoration: const InputDecoration(
-              hintText: 'Введите новое название',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _editPlaylistNameController.clear();
-              },
-              child: const Text(
-                'Отмена',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newName = _editPlaylistNameController.text.trim();
-                if (newName.isNotEmpty) {
-                  setState(() {
-                    _playlists[index]['name'] = newName;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Плейлист переименован в "$newName"'),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  _editPlaylistNameController.clear();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-              ),
-              child: const Text(
-                'Сохранить',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
+  void _editPlaylist(int index) async {
+    final Map<String, dynamic>? updatedPlaylist = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PlaylistFormScreen(existingPlaylist: _playlists[index]),
+      ),
     );
+
+    if (updatedPlaylist != null) {
+      setState(() {
+        _playlists[index]['name'] = updatedPlaylist['name'];
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Плейлист переименован в "${updatedPlaylist['name']}"'),
+          backgroundColor: Colors.deepPurple,
+        ),
+      );
+    }
   }
 
   void _removePlaylist(int index) {
@@ -153,13 +75,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
         backgroundColor: Colors.deepPurple[300],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _playlistNameController.dispose();
-    _editPlaylistNameController.dispose();
-    super.dispose();
   }
 
   @override
