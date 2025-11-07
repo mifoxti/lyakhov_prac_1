@@ -32,6 +32,15 @@ class PlayerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
+      appBar: AppBar(
+        title: const Text('Сейчас играет'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [

@@ -81,6 +81,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
+      appBar: AppBar(
+        title: const Text('Мой профиль'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(

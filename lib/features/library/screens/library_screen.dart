@@ -76,6 +76,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
+      appBar: AppBar(
+        title: const Text('Моя библиотека'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: Column(
         children: [
           Container(
