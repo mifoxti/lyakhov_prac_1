@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'app_router.dart';
-import 'features/intro/screens/intro_screen.dart';
-import 'features/library/screens/library_screen.dart';
-import 'features/player/state/player_container.dart';
-import 'features/search/screens/search_screen.dart';
-import 'features/profile/screens/profile_screen.dart';
 
 void main() {
   runApp(const MiMusicApp());
@@ -16,14 +11,14 @@ class MiMusicApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'MiMusic',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         useMaterial3: true,
       ),
-      home: const IntroScreen(),
+      routerConfig: appRouter,
     );
   }
 }
@@ -31,21 +26,13 @@ class MiMusicApp extends StatelessWidget {
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  void _goToIntroScreen(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const IntroScreen(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
         title: const Text(
-          'MiMusic - Главная',
+          'Главный экран',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -55,9 +42,9 @@ class MainScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            tooltip: 'ВЫХОД',
+            tooltip: 'Выход',
             icon: const Icon(Icons.logout),
-            onPressed: () => _goToIntroScreen(context),
+            onPressed: () => context.pushReplacement('/intro'),
           ),
         ],
       ),
@@ -77,11 +64,7 @@ class MainScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const LibraryScreen(),
-                ),
-              ),
+              onPressed: () => context.push('/main/library'),
               icon: const Icon(Icons.library_music, size: 28),
               label: const Text('Перейти в библиотеку', style: TextStyle(fontSize: 20)),
               style: ElevatedButton.styleFrom(
@@ -95,11 +78,7 @@ class MainScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => PlayerContainer.withScreen(),
-                ),
-              ),
+              onPressed: () => context.push('/main/player'),
               icon: const Icon(Icons.play_circle_fill, size: 28),
               label: const Text('Перейти в плеер', style: TextStyle(fontSize: 20)),
               style: ElevatedButton.styleFrom(
@@ -113,11 +92,7 @@ class MainScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const SearchScreen(),
-                ),
-              ),
+              onPressed: () => context.push('/main/search'),
               icon: const Icon(Icons.search, size: 28),
               label: const Text('Перейти к поиску', style: TextStyle(fontSize: 20)),
               style: ElevatedButton.styleFrom(
@@ -131,11 +106,7 @@ class MainScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              ),
+              onPressed: () => context.push('/main/profile'),
               icon: const Icon(Icons.person, size: 28),
               label: const Text('Перейти в профиль', style: TextStyle(fontSize: 20)),
               style: ElevatedButton.styleFrom(

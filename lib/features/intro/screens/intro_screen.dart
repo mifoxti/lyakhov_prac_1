@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-
-import '../../../main.dart';
+import 'package:go_router/go_router.dart';
 
 class IntroScreen extends StatelessWidget {
   const IntroScreen({super.key});
 
   void _goToMainScreen(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const MainScreen(),
-      ),
-    );
+    context.pushReplacement('/main');
   }
 
   @override
