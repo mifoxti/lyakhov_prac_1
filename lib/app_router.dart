@@ -1,34 +1,42 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'features/library/screens/playlist_form_screen.dart';
-import 'features/player/screens/player_form_screen.dart';
+import 'features/intro/screens/intro_screen.dart';
+import 'features/library/screens/library_screen.dart';
+import 'features/player/state/player_container.dart';
+import 'features/search/screens/search_screen.dart';
+import 'features/profile/screens/profile_screen.dart';
 import 'main.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/intro',
   routes: [
     GoRoute(
       path: '/',
-      name: 'main',
+      redirect: (context, state) => '/intro',
+    ),
+    GoRoute(
+      path: '/intro',
+      builder: (context, state) => const IntroScreen(),
+    ),
+    GoRoute(
+      path: '/main',
       builder: (context, state) => const MainScreen(),
       routes: [
         GoRoute(
-          path: 'library/playlist-form',
-          name: 'playlist-form',
-          pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: PlaylistFormScreen(
-              existingPlaylist: state.extra as Map<String, dynamic>?,
-            ),
-          ),
+          path: 'library',
+          builder: (context, state) => const LibraryScreen(),
         ),
         GoRoute(
-          path: 'player/track-form',
-          name: 'track-form',
-          pageBuilder: (context, state) => MaterialPage(
-            key: state.pageKey,
-            child: PlayerFormScreen(existingTrack: state.extra),
-          ),
+          path: 'player',
+          builder: (context, state) => PlayerContainer.withScreen(),
+        ),
+        GoRoute(
+          path: 'search',
+          builder: (context, state) => const SearchScreen(),
+        ),
+        GoRoute(
+          path: 'profile',
+          builder: (context, state) => const ProfileScreen(),
         ),
       ],
     ),
