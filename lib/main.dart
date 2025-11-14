@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'app_router.dart';
 import 'AppState.dart';
-import 'package:bloc/bloc.dart';
 import 'bloc_observer.dart';
+import 'auth_cubit.dart'; // ← Убедитесь, что путь правильный
 
 void main() {
   Bloc.observer = AppBlocObserver();
-  runApp(const MiMusicApp());
+  runApp(
+    BlocProvider(
+      create: (context) => AuthCubit(),
+      child: const MiMusicApp(),
+    ),
+  );
 }
 
 class MiMusicApp extends StatelessWidget {

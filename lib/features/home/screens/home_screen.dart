@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../../../auth_cubit.dart';
+
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +16,16 @@ class HomeScreen extends StatelessWidget {
         title: const Text('MiMusic - Главная'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            tooltip: 'Выход',
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              context.read<AuthCubit>().logout();
+              context.pushReplacement('/intro');
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -42,25 +55,25 @@ class HomeScreen extends StatelessWidget {
             _buildNavigationButton(
               context,
               '🎵 Библиотека',
-              '/library',
+              '/main/library',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '▶️ Плеер',
-              '/player',
+              '/main/player',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '🔍 Поиск',
-              '/search',
+              '/main/search',
             ),
             const SizedBox(height: 20),
             _buildNavigationButton(
               context,
               '👤 Профиль',
-              '/profile',
+              '/main/profile',
             ),
           ],
         ),
