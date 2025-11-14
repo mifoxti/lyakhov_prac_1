@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'app_router.dart';
 import 'AppState.dart';
-import 'bloc_observer.dart';
-import 'auth_cubit.dart'; // ← Убедитесь, что путь правильный
+import 'cubit/bloc_observer.dart';
+import 'cubit/auth_cubit.dart'; // ← Убедитесь, что путь правильный
 
 void main() {
   Bloc.observer = AppBlocObserver();
