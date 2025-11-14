@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class MainState {
   final String currentTrackTitle;
   final String currentArtist;
@@ -30,8 +29,7 @@ class MainState {
 }
 
 class MainCubit extends Cubit<MainState> {
-  MainCubit()
-      : super(const MainState(
+  MainCubit() : super(const MainState(
     currentTrackTitle: 'Тишина',
     currentArtist: 'Система',
     isSharedMode: false,
@@ -39,10 +37,7 @@ class MainCubit extends Cubit<MainState> {
   ));
 
   void updateCurrentTrack(String title, String artist) {
-    emit(state.copyWith(
-      currentTrackTitle: title,
-      currentArtist: artist,
-    ));
+    emit(state.copyWith(currentTrackTitle: title, currentArtist: artist));
   }
 
   void toggleSharedMode() {
@@ -50,8 +45,9 @@ class MainCubit extends Cubit<MainState> {
   }
 
   void updateParticipants(int count) {
-    if (count < 1) return;
-    emit(state.copyWith(participantsCount: count));
+    if (count >= 1) {
+      emit(state.copyWith(participantsCount: count));
+    }
   }
 
   void resetToDefault() {
