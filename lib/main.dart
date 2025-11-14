@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'app_router.dart';
 import 'AppState.dart';
+import 'package:bloc/bloc.dart';
+import 'bloc_observer.dart';
 
 void main() {
+  Bloc.observer = AppBlocObserver();
   runApp(const MiMusicApp());
 }
 
