@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import '../../../AppState.dart';
+import 'package:get_it/get_it.dart';
+import '../../../app_state_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -76,7 +77,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = AppState.of(context);
+    String playtimeText;
+
+    if (locator.isRegistered<AppStateService>()) {
+      final appStateService = locator.get<AppStateService>();
+      playtimeText = 'Минут прослушано: ${appStateService.totalPlaytimeMinutes}';
+    } else {
+      playtimeText = 'Минут прослушано: —';
+      print('Ошибка: AppStateService не зарегистрирован в GetIt!');
+    }
 
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
@@ -117,7 +126,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  if (appState.isPremiumUser)
+                  if (locator.isRegistered<AppStateService>() &&
+                      locator.get<AppStateService>().isPremiumUser)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
@@ -148,8 +158,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildStatItem('${_playlists.length}', 'Плейлистов'),
-                      // 🔹 Используем totalPlaytimeMinutes из AppState
-                      _buildStatItem(appState.totalPlaytimeMinutes.toString(), 'Минут прослушано'),
+                      // 🔹 Используем playtimeText — с проверкой регистрации
+                      _buildStatItem(playtimeText.split(': ').last, 'Минут прослушано'),
                       _buildStatItem('128', 'Всего треков'),
                     ],
                   ),
@@ -238,7 +248,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSettingItem('Качество звука', Icons.volume_up),
                   _buildSettingItem('Уведомления', Icons.notifications),
                   _buildSettingItem(
-                    appState.isPremiumUser ? 'Управление подпиской' : 'Премиум-доступ',
+                    locator.isRegistered<AppStateService>() && locator.get<AppStateService>().isPremiumUser
+                        ? 'Управление подпиской'
+                        : 'Премиум-доступ',
                     Icons.stars,
                   ),
                   const SizedBox(height: 20),
