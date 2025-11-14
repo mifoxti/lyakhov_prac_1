@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import '../../../AppState.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,14 +22,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final List<Map<String, dynamic>> _playlists = [
     {'id': 1, 'name': 'Любимые треки', 'count': 125},
-    {'id': 2, 'name': 'Топ 2024', 'count': 50},
+    {'id': 2, 'name': 'Топ 2025', 'count': 50},
     {'id': 3, 'name': 'Для релакса', 'count': 30},
     {'id': 4, 'name': 'Тренировка', 'count': 45},
     {'id': 5, 'name': 'Дорожные хиты', 'count': 60},
   ];
 
   int _nextId = 6;
-
   final String _profileImageUrl = 'https://i.pinimg.com/736x/0a/ba/41/0aba4155e6ae9d116d25bf83c4eac798.jpg';
 
   void _changeStatus() {
@@ -44,10 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _addNewPlaylist() async {
-    final Map<String, dynamic>? newPlaylist = await context.push(
-      '/library/playlist-form',
-    );
-
+    final Map<String, dynamic>? newPlaylist = await context.push('/library/playlist-form');
     if (newPlaylist != null) {
       setState(() {
         _playlists.add({
@@ -79,6 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppState.of(context);
+
     return Scaffold(
       backgroundColor: Colors.deepPurple[50],
       appBar: AppBar(
@@ -97,63 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Container(
-                    width: 140,
-                    height: 140,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Colors.purple, Colors.deepPurple, Colors.blue],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(70),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.deepPurple.withOpacity(0.5),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(62),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(59),
-                        child: CachedNetworkImage(
-                          imageUrl: _profileImageUrl,
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder: (context, url, progress) =>
-                              Container(
-                                color: Colors.deepPurple[100],
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
-                                  ),
-                                ),
-                              ),
-                          errorWidget: (context, url, error) => Container(
-                            color: Colors.deepPurple[100],
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Colors.deepPurple,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildProfileAvatar(),
                   const SizedBox(height: 20),
                   const Text(
                     'Тимофей Ляхов',
@@ -172,7 +115,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
+
+                  if (appState.isPremiumUser)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.amber[100],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'PREMIUM',
+                        style: TextStyle(
+                          color: Colors.amber[800],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+
                   const Text(
                     'Музыкальная статистика:',
                     style: TextStyle(
@@ -186,7 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildStatItem('${_playlists.length}', 'Плейлистов'),
-                      _buildStatItem('25', 'Найдено треков'),
+                      // 🔹 Используем totalPlaytimeMinutes из AppState
+                      _buildStatItem(appState.totalPlaytimeMinutes.toString(), 'Минут прослушано'),
                       _buildStatItem('128', 'Всего треков'),
                     ],
                   ),
@@ -200,6 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 40),
+
                   SizedBox(
                     width: 200,
                     child: ElevatedButton(
@@ -210,14 +174,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: const Text(
                         'Сменить статус',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -254,16 +216,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onPressed: () => _removePlaylist(playlist),
                             ),
                           ),
-                          const Divider(
-                            color: Colors.grey,
-                            height: 1,
-                          ),
+                          const Divider(color: Colors.grey, height: 1),
                         ],
                       ),
                     )
                         .toList(),
                   ),
                   const SizedBox(height: 30),
+
                   const Text(
                     'Настройки аккаунта:',
                     style: TextStyle(
@@ -277,12 +237,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSettingItem('Настройки приватности', Icons.security),
                   _buildSettingItem('Качество звука', Icons.volume_up),
                   _buildSettingItem('Уведомления', Icons.notifications),
+                  _buildSettingItem(
+                    appState.isPremiumUser ? 'Управление подпиской' : 'Премиум-доступ',
+                    Icons.stars,
+                  ),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProfileAvatar() {
+    return Container(
+      width: 140,
+      height: 140,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Colors.purple, Colors.deepPurple, Colors.blue],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(70),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(62),
+          border: Border.all(color: Colors.white, width: 3),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(59),
+          child: CachedNetworkImage(
+            imageUrl: _profileImageUrl,
+            fit: BoxFit.cover,
+            progressIndicatorBuilder: (context, url, progress) => Container(
+              color: Colors.deepPurple[100],
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) => Container(
+              color: Colors.deepPurple[100],
+              child: const Center(
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.deepPurple,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -315,10 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: ListTile(
         leading: Icon(icon, color: Colors.deepPurple),
-        title: Text(
-          text,
-          style: const TextStyle(color: Colors.deepPurple),
-        ),
+        title: Text(text, style: const TextStyle(color: Colors.deepPurple)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.deepPurple),
         onTap: () {},
       ),
