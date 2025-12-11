@@ -120,6 +120,13 @@ class _MainScreenContentState extends State<_MainScreenContent> {
             foregroundColor: Colors.white,
             actions: [
               IconButton(
+                tooltip: 'Настройки',
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  context.push('/main/settings');
+                },
+              ),
+              IconButton(
                 tooltip: 'Выход',
                 icon: const Icon(Icons.logout),
                 onPressed: () {
@@ -166,6 +173,10 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                 ),
                 const SizedBox(height: 30),
                 _buildNavigationButton(context, '🎵 Библиотека', '/main/library'),
+                const SizedBox(height: 20),
+                _buildNavigationButton(context, '🎙️ Подкасты', '/main/podcasts'),
+                const SizedBox(height: 20),
+                _buildNavigationButton(context, '📻 Радио', '/main/radio'),
                 const SizedBox(height: 20),
                 _buildNavigationButton(context, '▶️ Плеер', '/main/player'),
                 const SizedBox(height: 20),
