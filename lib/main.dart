@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 
 import 'app_router.dart';
 import 'cubit/auth_cubit.dart';
+import 'cubit/theme_cubit.dart';
 import 'cubit/bloc_observer.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   Bloc.observer = AppBlocObserver();
@@ -14,6 +16,7 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthCubit()),
+        BlocProvider(create: (context) => ThemeCubit()),
       ],
       child: const MiMusicApp(),
     ),
@@ -25,14 +28,17 @@ class MiMusicApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'MiMusic',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        useMaterial3: true,
-      ),
-      routerConfig: appRouter,
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        return MaterialApp.router(
+          title: 'MiMusic',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeState.materialThemeMode,
+          routerConfig: appRouter,
+        );
+      },
     );
   }
 }

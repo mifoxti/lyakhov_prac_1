@@ -313,9 +313,35 @@ class _PlayerScreenState extends State<PlayerScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          state.currentTrack?.artist ?? 'Добавьте треки',
-          style: TextStyle(fontSize: 16, color: Colors.deepPurple[700]),
+        GestureDetector(
+          onTap: () {
+            final artistName = state.currentTrack?.artist;
+            if (artistName != null && artistName.isNotEmpty) {
+              context.push('/main/artist/$artistName');
+            }
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                state.currentTrack?.artist ?? 'Добавьте треки',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.deepPurple[700],
+                  decoration: state.currentTrack != null ? TextDecoration.underline : TextDecoration.none,
+                  decorationColor: Colors.deepPurple[700],
+                ),
+              ),
+              if (state.currentTrack != null) ...[
+                const SizedBox(width: 5),
+                Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: Colors.deepPurple[700],
+                ),
+              ],
+            ],
+          ),
         ),
         const SizedBox(height: 5),
         Text(
@@ -323,16 +349,33 @@ class _PlayerScreenState extends State<PlayerScreen> {
           style: TextStyle(fontSize: 14, color: Colors.deepPurple[600]),
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: state.tracks.isEmpty ? null : () => _cubit.nextTrack(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple,
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-          ),
-          child: const Text(
-            'Следующий трек',
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: state.tracks.isEmpty ? null : () => _cubit.nextTrack(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              ),
+              child: const Text(
+                'Следующий трек',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: () => context.push('/main/friends'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purpleAccent,
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              ),
+              child: const Text(
+                'Совместное прослушивание',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ],
     );
