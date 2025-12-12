@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/player_model.dart';
+
+import '../../../core/models/track.dart';
 
 class PlayerFormScreen extends StatefulWidget {
   final dynamic existingTrack;

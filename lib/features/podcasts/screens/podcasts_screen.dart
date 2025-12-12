@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/models/podcast.dart';
 import '../cubit/podcasts_cubit.dart';
 
 class PodcastsScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _PodcastsScreenState extends State<PodcastsScreen> {
     );
   }
 
-  void _showEditDialog(BuildContext context, int index, Podcast currentPodcast) {
+  void _showEditDialog(BuildContext context, int index, PodcastModel currentPodcast) {
     final titleController = TextEditingController(text: currentPodcast.title);
     final authorController = TextEditingController(text: currentPodcast.author);
     final durationController = TextEditingController(text: currentPodcast.duration);
@@ -116,7 +117,7 @@ class _PodcastsScreenState extends State<PodcastsScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                final updatedPodcast = Podcast(
+                final updatedPodcast = PodcastModel(
                   id: currentPodcast.id,
                   title: titleController.text.trim(),
                   author: authorController.text.trim(),

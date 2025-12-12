@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/player_model.dart';
+
+import '../../../../core/models/track.dart';
 import 'player_row.dart';
 
 class PlayerTable extends StatelessWidget {

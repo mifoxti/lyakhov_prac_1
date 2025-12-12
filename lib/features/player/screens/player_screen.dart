@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../core/models/track.dart';
 import '../cubit/player_cubit.dart';
 import '../widgets/player_table.dart';
-import '../models/player_model.dart';
 
 class PlayerScreen extends StatefulWidget {
   const PlayerScreen({super.key});
@@ -163,7 +164,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   imageUrl: currentTrack.imageUrl,
                 );
                 if (newTrack.title.isNotEmpty && newTrack.artist.isNotEmpty) {
-                  _cubit.updateTrack(index, newTrack);
+                  _cubit.updateTrack(currentTrack.id, newTrack);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Трек "${newTrack.title}" обновлен'),
@@ -182,7 +183,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   void _removeTrack(BuildContext context, int index, String trackName) {
-    _cubit.removeTrack(index);
+    final track = _cubit.state.tracks[index];
+    _cubit.removeTrack(track.id);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

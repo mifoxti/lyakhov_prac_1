@@ -2,15 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import 'app_router.dart';
 import 'cubit/auth_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/bloc_observer.dart';
+import 'cubit/service_locator.dart';
 import 'theme/app_theme.dart';
 
 void main() {
+  setupLocator();
   Bloc.observer = AppBlocObserver();
   runApp(
     MultiBlocProvider(
