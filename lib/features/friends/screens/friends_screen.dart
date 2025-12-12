@@ -169,29 +169,75 @@ class _FriendsScreenState extends State<FriendsScreen> {
                               color: friend.isOnline ? Colors.deepPurple : Colors.grey,
                             ),
                           ),
-                          subtitle: Text(
-                            friend.isOnline ? 'Онлайн' : 'Оффлайн',
-                            style: TextStyle(
-                              color: friend.isOnline ? Colors.green : Colors.grey,
-                            ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                friend.isOnline ? 'Онлайн' : 'Оффлайн',
+                                style: TextStyle(
+                                  color: friend.isOnline ? Colors.green : Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              if (friend.isOnline && friend.currentTrack != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    '🎵 ${friend.currentTrack} — ${friend.currentArtist}',
+                                    style: const TextStyle(
+                                      color: Colors.deepPurple,
+                                      fontSize: 11,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                            ],
                           ),
-                          trailing: ElevatedButton(
-                            onPressed: friend.isOnline ? () {
-                              if (friend.isInvited) {
-                                _cubit.uninviteFriend(friend.id);
-                              } else {
-                                _cubit.inviteFriend(friend.id);
-                              }
-                            } : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: friend.isInvited ? Colors.red : Colors.deepPurple,
-                              disabledBackgroundColor: Colors.grey,
-                            ),
-                            child: Text(
-                              friend.isInvited ? 'Отменить' : 'Пригласить',
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
+                          trailing: friend.isOnline && friend.currentTrack != null
+                              ? ElevatedButton.icon(
+                                  onPressed: () {
+                                    _cubit.joinFriend(friend.id);
+                                    // Переходим на плеер с треком друга
+                                    context.push(
+                                      '/main/player?track=${Uri.encodeComponent(friend.currentTrack!)}&artist=${Uri.encodeComponent(friend.currentArtist!)}',
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Присоединяемся к ${friend.name}...'),
+                                        backgroundColor: Colors.deepPurple,
+                                        duration: const Duration(seconds: 2),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurple,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  ),
+                                  icon: const Icon(Icons.headphones, size: 16, color: Colors.white),
+                                  label: const Text(
+                                    'Присоединиться',
+                                    style: TextStyle(color: Colors.white, fontSize: 12),
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: friend.isOnline ? () {
+                                    if (friend.isInvited) {
+                                      _cubit.uninviteFriend(friend.id);
+                                    } else {
+                                      _cubit.inviteFriend(friend.id);
+                                    }
+                                  } : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: friend.isInvited ? Colors.red : Colors.deepPurple,
+                                    disabledBackgroundColor: Colors.grey,
+                                  ),
+                                  child: Text(
+                                    friend.isInvited ? 'Отменить' : 'Пригласить',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
                         ),
                       );
                     },

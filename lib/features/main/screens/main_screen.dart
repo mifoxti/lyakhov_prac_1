@@ -182,6 +182,8 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                 const SizedBox(height: 20),
                 _buildNavigationButton(context, '🔍 Поиск', '/main/search'),
                 const SizedBox(height: 20),
+                _buildNavigationButton(context, '👥 Друзья', '/main/friends'),
+                const SizedBox(height: 20),
                 _buildNavigationButton(context, '👤 Профиль', '/main/profile'),
               ],
             ),

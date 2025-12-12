@@ -34,7 +34,14 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(path: 'library', builder: (context, state) => const LibraryScreen()),
         GoRoute(path: 'podcasts', builder: (context, state) => const PodcastsScreen()),
-        GoRoute(path: 'player', builder: (context, state) => PlayerContainer.withScreen()),
+        GoRoute(
+          path: 'player',
+          builder: (context, state) {
+            final track = state.uri.queryParameters['track'];
+            final artist = state.uri.queryParameters['artist'];
+            return PlayerContainer.withScreen(track: track, artist: artist);
+          },
+        ),
         GoRoute(path: 'friends', builder: (context, state) => const FriendsScreen()),
         GoRoute(path: 'search', builder: (context, state) => const SearchScreen()),
         GoRoute(path: 'profile', builder: (context, state) => const ProfileScreen()),
