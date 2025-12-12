@@ -1,39 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Podcast {
-  final int id;
-  final String title;
-  final String author;
-  final String duration;
-  final String imageUrl;
-
-  Podcast({
-    required this.id,
-    required this.title,
-    required this.author,
-    required this.duration,
-    this.imageUrl = '',
-  });
-
-  Podcast copyWith({
-    int? id,
-    String? title,
-    String? author,
-    String? duration,
-    String? imageUrl,
-  }) {
-    return Podcast(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      author: author ?? this.author,
-      duration: duration ?? this.duration,
-      imageUrl: imageUrl ?? this.imageUrl,
-    );
-  }
-}
+import '../../../cubit/service_locator.dart';
+import '../../../core/models/podcast.dart';
+import '../../../domain/usecases/podcasts/add_podcast.dart';
+import '../../../domain/usecases/podcasts/get_podcasts.dart';
+import '../../../domain/usecases/podcasts/remove_podcast.dart';
+import '../../../domain/usecases/podcasts/update_podcast.dart';
 
 class PodcastState {
-  final List<Podcast> podcasts;
+  final List<PodcastModel> podcasts;
   final bool isLoading;
 
   const PodcastState({
@@ -42,7 +17,7 @@ class PodcastState {
   });
 
   PodcastState copyWith({
-    List<Podcast>? podcasts,
+    List<PodcastModel>? podcasts,
     bool? isLoading,
   }) {
     return PodcastState(
@@ -55,68 +30,61 @@ class PodcastState {
 }
 
 class PodcastsCubit extends Cubit<PodcastState> {
-  PodcastsCubit() : super(const PodcastState()) {
-    _loadInitialPodcasts();
+  final GetPodcasts getPodcastsUseCase;
+  final AddPodcast addPodcastUseCase;
+  final UpdatePodcast updatePodcastUseCase;
+  final RemovePodcast removePodcastUseCase;
+
+  PodcastsCubit()
+      : getPodcastsUseCase = locator<GetPodcasts>(),
+        addPodcastUseCase = locator<AddPodcast>(),
+        updatePodcastUseCase = locator<UpdatePodcast>(),
+        removePodcastUseCase = locator<RemovePodcast>(),
+        super(const PodcastState()) {
+    loadPodcasts();
   }
 
-  void _loadInitialPodcasts() {
-    emit(
-      PodcastState(
-        podcasts: [
-          Podcast(
-            id: 1,
-            title: 'Tech Talks Daily',
-            author: 'Tech Podcast Network',
-            duration: '45:30',
-            imageUrl: 'https://i.pinimg.com/736x/d4/93/70/d49370dcf687eca6ef3af1fe69a2982f.jpg',
-          ),
-          Podcast(
-            id: 2,
-            title: 'Mindfulness Moments',
-            author: 'Wellness Studio',
-            duration: '30:15',
-            imageUrl: 'https://i.pinimg.com/1200x/f1/16/4b/f1164beca80ea6925ae5448f9a21262c.jpg',
-          ),
-          Podcast(
-            id: 3,
-            title: 'Business Insights',
-            author: 'Entrepreneur Hub',
-            duration: '52:20',
-            imageUrl: 'https://i.pinimg.com/736x/a7/cf/e0/a7cfe02be1dcf6b8f4ee71e08258eedd.jpg',
-          ),
-          Podcast(
-            id: 4,
-            title: 'Science Simplified',
-            author: 'Science Today',
-            duration: '38:45',
-            imageUrl: 'https://i.pinimg.com/736x/1f/46/2b/1f462b1ece3b93d501b592401558748d.jpg',
-          ),
-        ],
-      ),
-    );
+  Future<void> loadPodcasts() async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      final podcasts = await getPodcastsUseCase.call();
+      emit(state.copyWith(podcasts: podcasts, isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false));
+      // Handle error
+    }
   }
 
-  int _nextId = 5;
-
-  void addPodcast(String title, String author, String duration) {
-    final newPodcast = Podcast(
-      id: _nextId++,
-      title: title,
-      author: author,
-      duration: duration,
-    );
-    emit(state.copyWith(podcasts: List.of(state.podcasts)..add(newPodcast)));
+  Future<void> addPodcast(String title, String author, String duration) async {
+    try {
+      final newPodcast = PodcastModel(
+        id: 0, // ID will be set in data layer
+        title: title,
+        author: author,
+        duration: duration,
+      );
+      await addPodcastUseCase.call(newPodcast);
+      await loadPodcasts(); // Reload list
+    } catch (e) {
+      // Handle error
+    }
   }
 
-  void updatePodcast(int index, Podcast updatedPodcast) {
-    final updated = List.of(state.podcasts);
-    updated[index] = updatedPodcast;
-    emit(state.copyWith(podcasts: updated));
+  Future<void> updatePodcast(int id, PodcastModel updatedPodcast) async {
+    try {
+      await updatePodcastUseCase.call(id, updatedPodcast);
+      await loadPodcasts(); // Reload list
+    } catch (e) {
+      // Handle error
+    }
   }
 
-  void removePodcast(int index) {
-    final updated = List.of(state.podcasts);
-    updated.removeAt(index);
-    emit(state.copyWith(podcasts: updated));
+  Future<void> removePodcast(int id) async {
+    try {
+      await removePodcastUseCase.call(id);
+      await loadPodcasts(); // Reload list
+    } catch (e) {
+      // Handle error
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/player_model.dart';
+
+import '../../../../core/models/track.dart';
 
 class PlayerRow extends StatelessWidget {
   final Track track;

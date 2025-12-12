@@ -1,5 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../models/player_model.dart';
+
+import '../../../cubit/service_locator.dart';
+import '../../../core/models/track.dart';
+import '../../../domain/usecases/tracks/add_track.dart';
+import '../../../domain/usecases/tracks/get_tracks.dart';
+import '../../../domain/usecases/tracks/remove_track.dart';
+import '../../../domain/usecases/tracks/update_track.dart';
 
 class PlayerState {
   final List<Track> tracks;
@@ -33,47 +39,57 @@ class PlayerState {
 }
 
 class PlayerCubit extends Cubit<PlayerState> {
-  PlayerCubit() : super(const PlayerState());
+  final GetTracks getTracksUseCase;
+  final AddTrack addTrackUseCase;
+  final UpdateTrack updateTrackUseCase;
+  final RemoveTrack removeTrackUseCase;
+
+  PlayerCubit()
+      : getTracksUseCase = locator<GetTracks>(),
+        addTrackUseCase = locator<AddTrack>(),
+        updateTrackUseCase = locator<UpdateTrack>(),
+        removeTrackUseCase = locator<RemoveTrack>(),
+        super(const PlayerState()) {
+    loadTracks();
+  }
+
+  Future<void> loadTracks() async {
+    try {
+      final tracks = await getTracksUseCase.call();
+      emit(state.copyWith(tracks: tracks));
+    } catch (e) {
+      // Handle error
+    }
+  }
 
   void initializeTracks(List<Track> initialTracks) {
     emit(state.copyWith(tracks: initialTracks));
   }
 
-  void addTrack(Track track) {
-    final updatedTracks = List<Track>.from(state.tracks)..add(track);
-    emit(state.copyWith(tracks: updatedTracks));
-  }
-
-  void updateTrack(int index, Track updatedTrack) {
-    if (index >= 0 && index < state.tracks.length) {
-      final updatedTracks = List<Track>.from(state.tracks);
-      updatedTracks[index] = updatedTrack;
-      emit(state.copyWith(tracks: updatedTracks));
+  Future<void> addTrack(Track track) async {
+    try {
+      await addTrackUseCase.call(track);
+      await loadTracks();
+    } catch (e) {
+      // Handle error
     }
   }
 
-  void removeTrack(int index) {
-    if (index >= 0 && index < state.tracks.length) {
-      final updatedTracks = List<Track>.from(state.tracks);
-      final deletedTrack = updatedTracks.removeAt(index);
+  Future<void> updateTrack(int id, Track updatedTrack) async {
+    try {
+      await updateTrackUseCase.call(id, updatedTrack);
+      await loadTracks();
+    } catch (e) {
+      // Handle error
+    }
+  }
 
-      int newCurrentIndex = state.currentIndex;
-      if (index == state.currentIndex) {
-        newCurrentIndex = updatedTracks.isEmpty ? 0 : 0;
-      } else if (index < state.currentIndex) {
-        newCurrentIndex = state.currentIndex - 1;
-      }
-
-      if (newCurrentIndex >= updatedTracks.length) {
-        newCurrentIndex = updatedTracks.isEmpty ? 0 : updatedTracks.length - 1;
-      }
-
-      emit(state.copyWith(
-        tracks: updatedTracks,
-        currentIndex: newCurrentIndex,
-        recentlyDeleted: deletedTrack,
-        recentlyDeletedIndex: index,
-      ));
+  Future<void> removeTrack(int id) async {
+    try {
+      await removeTrackUseCase.call(id);
+      await loadTracks();
+    } catch (e) {
+      // Handle error
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import '../models/player_model.dart';
+
+import '../../../core/models/track.dart';
 import '../screens/player_screen.dart';
 import '../cubit/player_cubit.dart';
 
