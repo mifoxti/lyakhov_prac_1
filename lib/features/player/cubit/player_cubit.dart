@@ -50,7 +50,12 @@ class PlayerCubit extends Cubit<PlayerState> {
         updateTrackUseCase = locator<UpdateTrack>(),
         removeTrackUseCase = locator<RemoveTrack>(),
         super(const PlayerState()) {
-    loadTracks();
+    print('Создан PlayerCubit');
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await loadTracks();
   }
 
   Future<void> loadTracks() async {
@@ -86,29 +91,78 @@ class PlayerCubit extends Cubit<PlayerState> {
 
   Future<void> removeTrack(int id) async {
     try {
-      await removeTrackUseCase.call(id);
-      await loadTracks();
+      // Найдем индекс удаляемого трека
+      final trackIndex = state.tracks.indexWhere((track) => track.id == id);
+      if (trackIndex != -1) {
+        final trackToDelete = state.tracks[trackIndex];
+        final wasCurrentTrack = trackIndex == state.currentIndex;
+        final wasBeforeCurrent = trackIndex < state.currentIndex;
+
+        // Удаляем трек
+        await removeTrackUseCase.call(id);
+
+        // Загружаем обновленный список
+        final updatedTracks = await getTracksUseCase.call();
+
+        // Корректируем currentIndex
+        int newCurrentIndex = state.currentIndex;
+        if (wasCurrentTrack && updatedTracks.isNotEmpty) {
+          // Если удаляли текущий трек, выбираем следующий или последний
+          newCurrentIndex = trackIndex < updatedTracks.length ? trackIndex : updatedTracks.length - 1;
+        } else if (wasBeforeCurrent) {
+          // Если удаляли трек перед текущим, сдвигаем индекс назад
+          newCurrentIndex = state.currentIndex - 1;
+        }
+
+        // Убеждаемся, что индекс валиден
+        if (newCurrentIndex >= updatedTracks.length) {
+          newCurrentIndex = updatedTracks.isNotEmpty ? updatedTracks.length - 1 : 0;
+        }
+        if (newCurrentIndex < 0) {
+          newCurrentIndex = 0;
+        }
+
+        emit(state.copyWith(
+          tracks: updatedTracks,
+          currentIndex: newCurrentIndex,
+          recentlyDeleted: trackToDelete,
+          recentlyDeletedIndex: trackIndex,
+        ));
+      }
     } catch (e) {
       // Handle error
     }
   }
 
-  void undoRemove() {
+  Future<void> undoRemove() async {
     if (state.recentlyDeleted != null && state.recentlyDeletedIndex != null) {
-      final updatedTracks = List<Track>.from(state.tracks);
-      updatedTracks.insert(state.recentlyDeletedIndex!, state.recentlyDeleted!);
+      try {
+        // Добавляем трек обратно в базу данных
+        await addTrackUseCase.call(state.recentlyDeleted!);
 
-      int newCurrentIndex = state.currentIndex;
-      if (state.recentlyDeletedIndex! <= state.currentIndex) {
-        newCurrentIndex = state.currentIndex + 1;
+        // Загружаем обновленный список
+        final updatedTracks = await getTracksUseCase.call();
+
+        // Корректируем currentIndex
+        int newCurrentIndex = state.currentIndex;
+        if (state.recentlyDeletedIndex! <= state.currentIndex) {
+          newCurrentIndex = state.currentIndex + 1;
+        }
+
+        // Убеждаемся, что индекс валиден
+        if (newCurrentIndex >= updatedTracks.length) {
+          newCurrentIndex = updatedTracks.length - 1;
+        }
+
+        emit(state.copyWith(
+          tracks: updatedTracks,
+          currentIndex: newCurrentIndex,
+          recentlyDeleted: null,
+          recentlyDeletedIndex: null,
+        ));
+      } catch (e) {
+        // Handle error
       }
-
-      emit(state.copyWith(
-        tracks: updatedTracks,
-        currentIndex: newCurrentIndex,
-        recentlyDeleted: null,
-        recentlyDeletedIndex: null,
-      ));
     }
   }
 

@@ -21,32 +21,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
   void initState() {
     super.initState();
     _cubit = PlayerCubit();
-    // Инициализируем начальные треки
-    _initializeTracks();
-  }
-
-  void _initializeTracks() {
-    final initialTracks = [
-      Track(
-        id: 1,
-        title: 'Perfect Symphony',
-        artist: 'Ed Sheeran & Andrea Bocelli',
-        duration: '4:20',
-      ),
-      Track(
-        id: 2,
-        title: 'Blinding Lights',
-        artist: 'The Weeknd',
-        duration: '3:22',
-      ),
-      Track(
-        id: 3,
-        title: 'Shape of You',
-        artist: 'Ed Sheeran',
-        duration: '3:53',
-      ),
-    ];
-    _cubit.initializeTracks(initialTracks);
   }
 
   @override

@@ -3,8 +3,9 @@ import '../models/track_dto.dart';
 
 class TrackMapper {
   static Track fromDto(TrackDto dto) {
+    assert(dto.id != null, 'TrackDto id cannot be null when converting to Track');
     return Track(
-      id: dto.id,
+      id: dto.id!,
       title: dto.title,
       artist: dto.artist,
       duration: dto.duration,

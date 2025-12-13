@@ -12,6 +12,10 @@ dependencies:
   get_it: ^8.0.0
   go_router: ^14.2.0
   flutter_bloc: ^8.1.1
+  sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.3.0+2
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

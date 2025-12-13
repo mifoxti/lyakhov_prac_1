@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../cubit/theme_cubit.dart';
 import '../../../theme/app_theme.dart';
 
@@ -9,32 +10,23 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _SettingsScreenContent();
-  }
-}
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        final primaryColor = AppTheme.getPrimaryColor(context);
+        final backgroundColor = AppTheme.getBackgroundColor(context);
+        final textColor = AppTheme.getTextColor(context);
+        final isDark = AppTheme.isDarkMode(context);
 
-class _SettingsScreenContent extends StatelessWidget {
-  const _SettingsScreenContent();
-
-  @override
-  Widget build(BuildContext context) {
-    final primaryColor = AppTheme.getPrimaryColor(context);
-    final backgroundColor = AppTheme.getBackgroundColor(context);
-    final textColor = AppTheme.getTextColor(context);
-    final isDark = AppTheme.isDarkMode(context);
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: const Text('Настройки'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: BlocBuilder<ThemeCubit, ThemeState>(
-        builder: (context, themeState) {
-          return SingleChildScrollView(
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          appBar: AppBar(
+            title: const Text('Настройки'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+            ),
+          ),
+          body: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -61,9 +53,9 @@ class _SettingsScreenContent extends StatelessWidget {
                 const SizedBox(height: 30),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

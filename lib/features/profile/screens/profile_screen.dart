@@ -140,6 +140,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showEditNameDialog(BuildContext context) {
+    final controller = TextEditingController(text: _cubit.state.displayName);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Изменить имя'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(labelText: 'Ваше имя'),
+            autofocus: true,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Отмена'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isNotEmpty && name != _cubit.state.displayName) {
+                  _cubit.updateDisplayName(name);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Имя изменено на "$name"'),
+                      backgroundColor: Colors.deepPurple,
+                    ),
+                  );
+                }
+                Navigator.of(context).pop();
+              },
+              child: const Text('Сохранить'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showEditProfileDialog(BuildContext context) {
     final controller = TextEditingController(text: _cubit.state.profileImageUrl);
 
@@ -208,13 +248,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: _buildProfileAvatar(state.profileImageUrl),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
-                          'Тимофей Ляхов',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              state.displayName,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.deepPurple, size: 20),
+                              onPressed: () => _showEditNameDialog(context),
+                              tooltip: 'Изменить имя',
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -320,19 +370,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 ListTile(
                                   leading: const Icon(Icons.queue_music, color: Colors.deepPurple),
-                                  title: Text(entry.value['name']),
-                                  subtitle: Text('${entry.value['count']} треков'),
+                                  title: Text(entry.value.name),
+                                  subtitle: Text('${entry.value.trackCount} треков'),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
                                         icon: const Icon(Icons.edit, color: Colors.deepPurple),
-                                        onPressed: () => _showEditPlaylistDialog(context, entry.key, entry.value['name']),
+                                        onPressed: () => _showEditPlaylistDialog(context, entry.key, entry.value.name),
                                         tooltip: 'Редактировать',
                                       ),
                                       IconButton(
                                         icon: const Icon(Icons.delete, color: Colors.red),
-                                        onPressed: () => _removePlaylist(context, entry.key, entry.value['name']),
+                                        onPressed: () => _removePlaylist(context, entry.key, entry.value.name),
                                         tooltip: 'Удалить',
                                       ),
                                     ],

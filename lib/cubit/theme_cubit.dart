@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../data/datasources/preferences_helper.dart';
+
 enum AppThemeMode {
   light,
   dark,
@@ -45,7 +47,7 @@ class ThemeCubit extends Cubit<ThemeState> {
           isDarkMode: false,
         ));
 
-  void setThemeMode(AppThemeMode mode, {bool? systemIsDark}) {
+  Future<void> setThemeMode(AppThemeMode mode, {bool? systemIsDark}) async {
     bool isDark = false;
 
     switch (mode) {
@@ -64,6 +66,20 @@ class ThemeCubit extends Cubit<ThemeState> {
       themeMode: mode,
       isDarkMode: isDark,
     ));
+
+    // Сохраняем в SharedPreferences
+    await PreferencesHelper.instance.setThemeMode(mode.name);
+  }
+
+  Future<void> loadSavedTheme() async {
+    final savedTheme = await PreferencesHelper.instance.getThemeMode();
+    if (savedTheme != null) {
+      final mode = AppThemeMode.values.firstWhere(
+        (mode) => mode.name == savedTheme,
+        orElse: () => AppThemeMode.light,
+      );
+      await setThemeMode(mode);
+    }
   }
 
   void toggleTheme() {

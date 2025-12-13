@@ -1,20 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Playlist {
-  final int id;
-  final String name;
-  final int trackCount;
-
-  Playlist({required this.id, required this.name, this.trackCount = 0});
-
-  Playlist copyWith({int? id, String? name, int? trackCount}) {
-    return Playlist(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      trackCount: trackCount ?? this.trackCount,
-    );
-  }
-}
+import '../../../core/models/playlist.dart';
+import '../../../cubit/service_locator.dart';
+import '../../../domain/usecases/playlists/create_playlist.dart';
+import '../../../domain/usecases/playlists/delete_playlist.dart';
+import '../../../domain/usecases/playlists/get_playlists.dart';
+import '../../../domain/usecases/playlists/update_playlist.dart';
 
 class LibraryState {
   final List<Playlist> playlists;
@@ -29,36 +20,61 @@ class LibraryState {
 }
 
 class LibraryCubit extends Cubit<LibraryState> {
-  LibraryCubit() : super(const LibraryState()) {
-    emit(
-      LibraryState(
-        playlists: [
-          Playlist(id: 1, name: 'Любимые треки', trackCount: 125),
-          Playlist(id: 2, name: 'Топ 2025', trackCount: 50),
-          Playlist(id: 3, name: 'Для релакса', trackCount: 30),
-          Playlist(id: 4, name: 'Тренировка', trackCount: 45),
-          Playlist(id: 5, name: 'Дорожные хиты', trackCount: 60),
-        ],
-      ),
-    );
+  final GetPlaylists getPlaylistsUseCase;
+  final CreatePlaylist createPlaylistUseCase;
+  final UpdatePlaylist updatePlaylistUseCase;
+  final DeletePlaylist deletePlaylistUseCase;
+
+  LibraryCubit()
+      : getPlaylistsUseCase = locator<GetPlaylists>(),
+        createPlaylistUseCase = locator<CreatePlaylist>(),
+        updatePlaylistUseCase = locator<UpdatePlaylist>(),
+        deletePlaylistUseCase = locator<DeletePlaylist>(),
+        super(const LibraryState()) {
+    _initialize();
   }
 
-  int _nextId = 6;
-
-  void addPlaylist(String name) {
-    final newPlaylist = Playlist(id: _nextId++, name: name);
-    emit(state.copyWith(playlists: List.of(state.playlists)..add(newPlaylist)));
+  Future<void> _initialize() async {
+    await loadPlaylists();
   }
 
-  void updatePlaylist(int index, String newName) {
-    final updated = List.of(state.playlists);
-    updated[index] = updated[index].copyWith(name: newName);
-    emit(state.copyWith(playlists: updated));
+  Future<void> loadPlaylists() async {
+    try {
+      final playlists = await getPlaylistsUseCase.call();
+      emit(state.copyWith(playlists: playlists));
+    } catch (e) {
+      // Handle error
+    }
   }
 
-  void removePlaylist(int index) {
-    final updated = List.of(state.playlists);
-    updated.removeAt(index);
-    emit(state.copyWith(playlists: updated));
+  Future<void> addPlaylist(String name) async {
+    try {
+      final newPlaylist = Playlist(name: name);
+      await createPlaylistUseCase.call(newPlaylist);
+      await loadPlaylists();
+    } catch (e) {
+      // Handle error
+    }
+  }
+
+  Future<void> updatePlaylist(int index, String newName) async {
+    try {
+      final playlist = state.playlists[index];
+      final updatedPlaylist = playlist.copyWith(name: newName);
+      await updatePlaylistUseCase.call(playlist.id!, updatedPlaylist);
+      await loadPlaylists();
+    } catch (e) {
+      // Handle error
+    }
+  }
+
+  Future<void> removePlaylist(int index) async {
+    try {
+      final playlist = state.playlists[index];
+      await deletePlaylistUseCase.call(playlist.id!);
+      await loadPlaylists();
+    } catch (e) {
+      // Handle error
+    }
   }
 }

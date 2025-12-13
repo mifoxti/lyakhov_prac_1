@@ -38,7 +38,7 @@ class _IntroScreenState extends State<IntroScreen> {
       return;
     }
 
-    context.read<AuthCubit>().login(login);
+    context.read<AuthCubit>().login(login, password);
     context.pushReplacement('/main');
   }
 

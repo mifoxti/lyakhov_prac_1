@@ -1,10 +1,10 @@
 import '../../../core/models/track.dart';
 import '../../domain/repositories/track_repository.dart';
-import '../datasources/in_memory_track_data_source.dart';
+import '../datasources/track_local_data_source.dart';
 import '../mappers/track_mapper.dart';
 
 class TrackRepositoryImpl implements TrackRepository {
-  final InMemoryTrackDataSource dataSource;
+  final TrackLocalDataSource dataSource;
 
   TrackRepositoryImpl(this.dataSource);
 
