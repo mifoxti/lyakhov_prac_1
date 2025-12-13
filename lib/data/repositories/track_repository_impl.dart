@@ -11,18 +11,18 @@ class TrackRepositoryImpl implements TrackRepository {
   @override
   Future<List<Track>> getTracks() async {
     final dtos = await dataSource.getTracks();
-    return dtos.map((dto) => TrackMapper.fromDto(dto)).toList();
+    return dtos.map((dto) => dto.toModel()).toList();
   }
 
   @override
   Future<void> addTrack(Track track) async {
-    final dto = TrackMapper.toDto(track);
+    final dto = track.toDto();
     await dataSource.addTrack(dto);
   }
 
   @override
   Future<void> updateTrack(int id, Track track) async {
-    final dto = TrackMapper.toDto(track);
+    final dto = track.toDto();
     await dataSource.updateTrack(id, dto);
   }
 

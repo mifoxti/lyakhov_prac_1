@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'track_dto.g.dart';
+
+@JsonSerializable()
 class TrackDto {
   final int? id;
   final String title;
@@ -13,6 +18,9 @@ class TrackDto {
     this.imageUrl,
   });
 
+  factory TrackDto.fromJson(Map<String, dynamic> json) => _$TrackDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$TrackDtoToJson(this);
+
   factory TrackDto.fromMap(Map<String, dynamic> map) {
     return TrackDto(
       id: map['id'] as int?,
@@ -24,31 +32,12 @@ class TrackDto {
   }
 
   Map<String, dynamic> toMap() {
-    final Map<String, dynamic> map = {
+    return {
+      'id': id,
       'title': title,
       'artist': artist,
       'duration': duration,
       'imageUrl': imageUrl,
     };
-    if (id != null) {
-      map['id'] = id!;
-    }
-    return map;
-  }
-
-  TrackDto copyWith({
-    int? id,
-    String? title,
-    String? artist,
-    String? duration,
-    String? imageUrl,
-  }) {
-    return TrackDto(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      artist: artist ?? this.artist,
-      duration: duration ?? this.duration,
-      imageUrl: imageUrl ?? this.imageUrl,
-    );
   }
 }

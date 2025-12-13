@@ -8,6 +8,7 @@ import 'features/main/screens/main_screen.dart';
 import 'features/library/screens/library_screen.dart';
 import 'features/player/state/player_container.dart';
 import 'features/search/screens/search_screen.dart';
+import 'features/online_search/screens/online_search_screen.dart';
 import 'features/profile/screens/profile_screen.dart';
 import 'features/podcasts/screens/podcasts_screen.dart';
 import 'features/friends/screens/friends_screen.dart';
@@ -42,6 +43,7 @@ final GoRouter appRouter = GoRouter(
           },
         ),
         GoRoute(path: 'friends', builder: (context, state) => const FriendsScreen()),
+        GoRoute(path: 'online-search', builder: (context, state) => const OnlineSearchScreen()),
         GoRoute(path: 'search', builder: (context, state) => const SearchScreen()),
         GoRoute(path: 'profile', builder: (context, state) => const ProfileScreen()),
         GoRoute(path: 'radio', builder: (context, state) => const RadioScreen()),
