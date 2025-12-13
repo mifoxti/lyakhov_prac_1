@@ -8,7 +8,7 @@ class TrackLocalDataSource {
     final db = await _dbHelper.database;
     final result = await db.query('tracks', orderBy: 'title ASC');
 
-    return result.map((map) => TrackDto.fromMap(map)).toList();
+    return result.map((map) => TrackDto.fromJson(map)).toList();
   }
 
   Future<TrackDto?> getTrackById(int id) async {
@@ -20,21 +20,21 @@ class TrackLocalDataSource {
     );
 
     if (result.isNotEmpty) {
-      return TrackDto.fromMap(result.first);
+      return TrackDto.fromJson(result.first);
     }
     return null;
   }
 
   Future<int> insertTrack(TrackDto track) async {
     final db = await _dbHelper.database;
-    return await db.insert('tracks', track.toMap());
+    return await db.insert('tracks', track.toJson());
   }
 
   Future<int> updateTrack(int id, TrackDto track) async {
     final db = await _dbHelper.database;
     return await db.update(
       'tracks',
-      track.toMap(),
+      track.toJson(),
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -51,7 +51,7 @@ class TrackLocalDataSource {
 
   Future<int> addTrack(TrackDto track) async {
     final db = await _dbHelper.database;
-    return await db.insert('tracks', track.toMap());
+    return await db.insert('tracks', track.toJson());
   }
 
   Future<int> removeTrack(int id) async {
@@ -72,7 +72,7 @@ class TrackLocalDataSource {
       orderBy: 'title ASC',
     );
 
-    return result.map((map) => TrackDto.fromMap(map)).toList();
+    return result.map((map) => TrackDto.fromJson(map)).toList();
   }
 
   Future<void> addToFavorites(int trackId) async {
@@ -97,7 +97,7 @@ class TrackLocalDataSource {
       ORDER BY f.added_at DESC
     ''');
 
-    return result.map((map) => TrackDto.fromMap(map)).toList();
+    return result.map((map) => TrackDto.fromJson(map)).toList();
   }
 
   Future<bool> isTrackFavorite(int trackId) async {

@@ -1,7 +1,7 @@
 import '../../../core/models/track.dart';
 import '../../domain/repositories/track_repository.dart';
 import '../datasources/track_local_data_source.dart';
-import '../mappers/track_mapper.dart';
+import '../mappers/track_mapper.dart' as track_mapper;
 
 class TrackRepositoryImpl implements TrackRepository {
   final TrackLocalDataSource dataSource;
@@ -11,18 +11,18 @@ class TrackRepositoryImpl implements TrackRepository {
   @override
   Future<List<Track>> getTracks() async {
     final dtos = await dataSource.getTracks();
-    return dtos.map((dto) => dto.toModel()).toList();
+    return dtos.map((dto) => track_mapper.trackDtoToModel(dto)).toList();
   }
 
   @override
   Future<void> addTrack(Track track) async {
-    final dto = track.toDto();
+    final dto = track_mapper.trackModelToDto(track);
     await dataSource.addTrack(dto);
   }
 
   @override
   Future<void> updateTrack(int id, Track track) async {
-    final dto = track.toDto();
+    final dto = track_mapper.trackModelToDto(track);
     await dataSource.updateTrack(id, dto);
   }
 

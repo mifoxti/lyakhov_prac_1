@@ -24,7 +24,7 @@ class PlaylistDto {
     List<Map<String, dynamic>> trackMaps,
     Map<String, dynamic>? settingsMap,
   ) {
-    final tracks = trackMaps.map((trackMap) => TrackDto.fromMap(trackMap)).toList();
+    final tracks = trackMaps.map((trackMap) => TrackDto.fromJson(trackMap)).toList();
 
     return PlaylistDto(
       id: playlistMap['id'] as int?,

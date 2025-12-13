@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../cubit/online_search_cubit.dart';
 
@@ -35,7 +36,7 @@ class _ArtistsTabState extends State<ArtistsTab> {
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Поиск исполнителей...',
+              hintText: 'Поиск (artisttop:Geoxor, country:Россия, genre:Rock)',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.clear),
@@ -102,6 +103,108 @@ class _ArtistsTabState extends State<ArtistsTab> {
                 );
               }
 
+              // Show tracks if artisttop: was used
+              if (state.showTracksInArtistsTab) {
+                if (state.artistTabTracks.isEmpty) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          size: 64,
+                          color: Colors.deepPurple,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Треки не найдены',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: state.artistTabTracks.length,
+                  itemBuilder: (context, index) {
+                    final track = state.artistTabTracks[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: track.imageUrl != null && track.imageUrl!.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: track.imageUrl!,
+                                  width: 50,
+                                  height: 50,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    width: 50,
+                                    height: 50,
+                                    color: Colors.deepPurple[100],
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepPurple[100],
+                                    ),
+                                    child: const Icon(
+                                      Icons.music_note,
+                                      color: Colors.deepPurple,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple[100],
+                                  ),
+                                  child: const Icon(
+                                    Icons.music_note,
+                                    color: Colors.deepPurple,
+                                  ),
+                                ),
+                        ),
+                        title: Text(
+                          track.title.isNotEmpty ? track.title : 'Неизвестный трек',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '${track.artist.isNotEmpty ? track.artist : 'Неизвестный исполнитель'} • ${track.duration}',
+                          style: TextStyle(color: Colors.deepPurple[700]),
+                        ),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.deepPurple,
+                          ),
+                          onPressed: () {
+                            // TODO: Play track
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+
+              // Show artists (default behavior)
               if (state.artists.isEmpty) {
                 return const Center(
                   child: Column(
@@ -129,32 +232,40 @@ class _ArtistsTabState extends State<ArtistsTab> {
                 itemCount: state.artists.length,
                 itemBuilder: (context, index) {
                   final artist = state.artists[index];
-                  // TODO: Replace with proper Artist model
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: ListTile(
-                      leading: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: Colors.deepPurple[100],
-                        ),
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.deepPurple,
-                        ),
-                      ),
+                      leading: artist.imageUrl != null && artist.imageUrl!.isNotEmpty
+                          ? CircleAvatar(
+                              radius: 25,
+                              backgroundImage: NetworkImage(artist.imageUrl!),
+                              onBackgroundImageError: (_, __) => const Icon(
+                                Icons.person,
+                                color: Colors.deepPurple,
+                              ),
+                            )
+                          : Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                                color: Colors.deepPurple[100],
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
                       title: Text(
-                        artist.toString(), // TODO: Use proper artist name
+                        artist.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Colors.deepPurple,
                         ),
                       ),
-                      subtitle: const Text(
-                        'Исполнитель',
-                        style: TextStyle(color: Colors.deepPurple),
+                      subtitle: Text(
+                        artist.genre ?? 'Исполнитель',
+                        style: const TextStyle(color: Colors.deepPurple),
                       ),
                       trailing: IconButton(
                         icon: const Icon(
@@ -163,6 +274,9 @@ class _ArtistsTabState extends State<ArtistsTab> {
                         ),
                         onPressed: () {
                           // TODO: Navigate to artist detail
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Переход к ${artist.name}')),
+                          );
                         },
                       ),
                     ),

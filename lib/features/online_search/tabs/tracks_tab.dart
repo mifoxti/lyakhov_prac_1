@@ -36,7 +36,7 @@ class _TracksTabState extends State<TracksTab> {
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Поиск треков...',
+              hintText: 'Поиск (#rock, artisttop:Metallica)',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.clear),
@@ -133,40 +133,58 @@ class _TracksTabState extends State<TracksTab> {
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: ListTile(
-                      leading: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.deepPurple[100],
-                        ),
-                        child: track.imageUrl != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: track.imageUrl!,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => const Icon(
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: track.imageUrl != null && track.imageUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: track.imageUrl!,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 50,
+                                  height: 50,
+                                  color: Colors.deepPurple[100],
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple),
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple[100],
+                                  ),
+                                  child: const Icon(
                                     Icons.music_note,
                                     color: Colors.deepPurple,
                                   ),
                                 ),
                               )
-                            : const Icon(
-                                Icons.music_note,
-                                color: Colors.deepPurple,
+                            : Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.deepPurple[100],
+                                ),
+                                child: const Icon(
+                                  Icons.music_note,
+                                  color: Colors.deepPurple,
+                                ),
                               ),
                       ),
                       title: Text(
-                        track.title,
+                        track.title.isNotEmpty ? track.title : 'Неизвестный трек',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Colors.deepPurple,
                         ),
                       ),
                       subtitle: Text(
-                        '${track.artist} • ${track.duration}',
+                        '${track.artist.isNotEmpty ? track.artist : 'Неизвестный исполнитель'} • ${track.duration}',
                         style: TextStyle(color: Colors.deepPurple[700]),
                       ),
                       trailing: IconButton(
