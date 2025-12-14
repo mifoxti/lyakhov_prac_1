@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../cubit/auth_cubit.dart';
+import '../../../theme/app_theme.dart';
 import '../cubit/main_cubit.dart';
 
 class MainScreen extends StatelessWidget {
@@ -30,6 +31,8 @@ class _MainScreenContentState extends State<_MainScreenContent> {
   void _showEditSessionDialog(BuildContext context) {
     final cubit = context.read<MainCubit>();
     final currentState = cubit.state;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     final titleController = TextEditingController(text: currentState.currentTrackTitle);
     final artistController = TextEditingController(text: currentState.currentArtist);
@@ -40,7 +43,8 @@ class _MainScreenContentState extends State<_MainScreenContent> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Редактировать сессию'),
+          backgroundColor: colors.surface,
+          title: Text('Редактировать сессию', style: TextStyle(color: colors.onSurface)),
           content: SizedBox(
             width: double.maxFinite,
             child: Column(
@@ -48,16 +52,24 @@ class _MainScreenContentState extends State<_MainScreenContent> {
               children: [
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Трек'),
+                  decoration: InputDecoration(
+                    labelText: 'Трек',
+                    labelStyle: TextStyle(color: colors.onSurface.withOpacity(0.7)),
+                  ),
+                  style: TextStyle(color: colors.onSurface),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: artistController,
-                  decoration: const InputDecoration(labelText: 'Исполнитель'),
+                  decoration: InputDecoration(
+                    labelText: 'Исполнитель',
+                    labelStyle: TextStyle(color: colors.onSurface.withOpacity(0.7)),
+                  ),
+                  style: TextStyle(color: colors.onSurface),
                 ),
                 const SizedBox(height: 12),
                 SwitchListTile(
-                  title: const Text('Совместный режим'),
+                  title: Text('Совместный режим', style: TextStyle(color: colors.onSurface)),
                   value: isShared,
                   onChanged: (value) {
                     setState(() {
@@ -65,12 +77,17 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                     });
                   },
                   contentPadding: EdgeInsets.zero,
+                  activeColor: colors.primary,
                 ),
                 if (isShared)
                   TextField(
                     controller: participantsController,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Участников'),
+                    decoration: InputDecoration(
+                      labelText: 'Участников',
+                      labelStyle: TextStyle(color: colors.onSurface.withOpacity(0.7)),
+                    ),
+                    style: TextStyle(color: colors.onSurface),
                   ),
               ],
             ),
@@ -78,7 +95,7 @@ class _MainScreenContentState extends State<_MainScreenContent> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Отмена'),
+              child: Text('Отмена', style: TextStyle(color: colors.primary)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -100,6 +117,10 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                 }
                 Navigator.of(context).pop();
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
+              ),
               child: const Text('Сохранить'),
             ),
           ],
@@ -112,23 +133,27 @@ class _MainScreenContentState extends State<_MainScreenContent> {
   Widget build(BuildContext context) {
     return BlocBuilder<MainCubit, MainState>(
       builder: (context, state) {
+        final theme = Theme.of(context);
+        final colors = theme.colorScheme;
+        final isDarkMode = AppTheme.isDarkMode(context);
+        
         return Scaffold(
-          backgroundColor: Colors.deepPurple[50],
+          backgroundColor: colors.background,
           appBar: AppBar(
             title: const Text('MiMusic - Главная'),
-            backgroundColor: Colors.deepPurple,
-            foregroundColor: Colors.white,
+            backgroundColor: colors.primary,
+            foregroundColor: colors.onPrimary,
             actions: [
               IconButton(
                 tooltip: 'Настройки',
-                icon: const Icon(Icons.settings),
+                icon: Icon(Icons.settings, color: colors.onPrimary),
                 onPressed: () {
                   context.push('/main/settings');
                 },
               ),
               IconButton(
                 tooltip: 'Выход',
-                icon: const Icon(Icons.logout),
+                icon: Icon(Icons.logout, color: colors.onPrimary),
                 onPressed: () {
                   context.read<AuthCubit>().logout();
                   context.pushReplacement('/intro');
@@ -143,17 +168,20 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                 Text(
                   'Сейчас играет:\n${state.currentTrackTitle} — ${state.currentArtist}',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: colors.primary,
                   ),
                 ),
                 const SizedBox(height: 20),
                 if (state.isSharedMode)
                   Text(
                     '👥 Совместное прослушивание (${state.participantsCount} участников)',
-                    style: const TextStyle(color: Colors.deepPurple, fontSize: 16),
+                    style: TextStyle(
+                      color: colors.primary,
+                      fontSize: 16,
+                    ),
                   ),
                 const SizedBox(height: 30),
                 // 🔹 Кнопка редактирования сессии
@@ -162,29 +190,33 @@ class _MainScreenContentState extends State<_MainScreenContent> {
                   child: OutlinedButton(
                     onPressed: () => _showEditSessionDialog(context),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.deepPurple),
+                      side: BorderSide(color: colors.primary),
                       padding: const EdgeInsets.symmetric(vertical: 12),
+                      foregroundColor: colors.primary,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Редактировать сессию',
-                      style: TextStyle(color: Colors.deepPurple, fontSize: 16),
+                      style: TextStyle(
+                        color: colors.primary,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 30),
-                _buildNavigationButton(context, '🎵 Библиотека', '/main/library'),
+                _buildNavigationButton(context, '🎵 Библиотека', '/main/library', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '🎙️ Подкасты', '/main/podcasts'),
+                _buildNavigationButton(context, '🎙️ Подкасты', '/main/podcasts', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '📻 Радио', '/main/radio'),
+                _buildNavigationButton(context, '📻 Радио', '/main/radio', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '▶️ Плеер', '/main/player'),
+                _buildNavigationButton(context, '▶️ Плеер', '/main/player', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '🔍 Онлайн поиск', '/main/online-search'),
+                _buildNavigationButton(context, '🔍 Онлайн поиск', '/main/online-search', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '👥 Друзья', '/main/friends'),
+                _buildNavigationButton(context, '👥 Друзья', '/main/friends', colors),
                 const SizedBox(height: 20),
-                _buildNavigationButton(context, '👤 Профиль', '/main/profile'),
+                _buildNavigationButton(context, '👤 Профиль', '/main/profile', colors),
               ],
             ),
           ),
@@ -193,18 +225,19 @@ class _MainScreenContentState extends State<_MainScreenContent> {
     );
   }
 
-  Widget _buildNavigationButton(BuildContext context, String text, String route) {
+  Widget _buildNavigationButton(BuildContext context, String text, String route, ColorScheme colors) {
     return SizedBox(
       width: 200,
       child: ElevatedButton(
         onPressed: () => context.push(route),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepPurple,
+          backgroundColor: colors.primary,
+          foregroundColor: colors.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: 15),
         ),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 18, color: Colors.white),
+          style: TextStyle(fontSize: 18, color: colors.onPrimary),
         ),
       ),
     );

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(unzip:*)",
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(python3:*)",
+      "Bash(where:*)",
+      "Bash(\"C:\\Users\\timof\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\" update_report.py)",
+      "Bash(\"C:\\Users\\timof\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\" update_report_detailed.py)",
+      "Bash(\"C:\\Users\\timof\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\" check_document.py)",
+      "Bash(\"C:\\Users\\timof\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\" fix_screen_count.py)",
+      "Bash(\"C:\\Users\\timof\\AppData\\Local\\Programs\\Python\\Python314\\python.exe\" -c \"from docx import Document; doc = Document(''./android/Reports/РКМП_Практическая_работа_10_СоваренкоВВ.docx''); [print(p.text) for p in doc.paragraphs if ''содержит'' in p.text and ''бизнес'' in p.text]\")",
+      "Bash(flutter pub run build_runner build:*)",
+      "Bash(flutter analyze:*)"
+    ]
+  }
+}
